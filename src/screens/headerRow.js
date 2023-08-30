@@ -191,7 +191,11 @@ function handleChanged(event) {
         case 0:
             // Number of Slave BMS connected to master
             let numOfSlaveBMS = receivedBuffer[3];
-            let numOfSlaveBMS_string = "A="+numOfSlaveBMS.toString()+";";
+            let masteBMS = 1;
+            let totalBMS = masteBMS+numOfSlaveBMS;
+            let numOfSlaveBMS_string = "A="+totalBMS.toString()+";";
+            dispatch(dataAction.setDeviceConnected(true));
+            dispatch(dataAction.setBMS(totalBMS));
             //dispatch here
             break;
         
@@ -247,7 +251,7 @@ function handleChanged(event) {
         <Heading children="Dashboard - BMS"/>
         <GreenButton onClick={()=>{
           read();
-          dispatch(dataAction.setDeviceConnected(true));
+          // dispatch(dataAction.setDeviceConnected(true));
         }}>Pair BMS</GreenButton>
       </Header>
      

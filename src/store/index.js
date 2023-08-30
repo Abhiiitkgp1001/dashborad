@@ -10,8 +10,8 @@ const dataSlice = createSlice({
         state.deviceConnected = action.payload;
     },
     setBMS: (state, action) => {
-        //var data = action.payload;
-        var data = "A=2;";
+        var data = action.payload;
+        // var data = "A=2;";
         var slicedData = data.substring(2).replace(';','');
         
         state.bms = slicedData;
