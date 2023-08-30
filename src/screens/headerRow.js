@@ -194,8 +194,9 @@ function handleChanged(event) {
             let masteBMS = 1;
             let totalBMS = masteBMS+numOfSlaveBMS;
             let numOfSlaveBMS_string = "A="+totalBMS.toString()+";";
-            dispatch(dataAction.setDeviceConnected(true));
             dispatch(dataAction.setBMS(totalBMS));
+            dispatch(dataAction.setDeviceConnected(true));
+            
             //dispatch here
             break;
         
