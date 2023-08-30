@@ -69,29 +69,29 @@ const HeaderRow = () => {
   const dispatch = useDispatch()
 
 
-  useEffect(() => {
-    if(deviceConnected == true){
-      dispatch(dataAction.setBMS());
-      dispatch(dataAction.setCells());
-      dispatch(dataAction.setVoltage(27));   
-      dispatch(dataAction.setTemp(8)); 
-      dispatch(dataAction.setCurrent(78));  
-    }  
-  }, [deviceConnected])
+  // useEffect(() => {
+  //   if(deviceConnected == true){
+  //     dispatch(dataAction.setBMS());
+  //     dispatch(dataAction.setCells());
+  //     dispatch(dataAction.setVoltage(27));   
+  //     dispatch(dataAction.setTemp(8)); 
+  //     dispatch(dataAction.setCurrent(78));  
+  //   }  
+  // }, [deviceConnected])
   
-  useEffect(() => {
-    if(deviceConnected == true){
-      const interval = setInterval(()=>{
-        dispatch(dataAction.setVoltage(27));
-        dispatch(dataAction.setTemp(8));   
-        dispatch(dataAction.setCurrent(78)); 
-      },4000)
+  // useEffect(() => {
+  //   if(deviceConnected == true){
+  //     const interval = setInterval(()=>{
+  //       dispatch(dataAction.setVoltage(27));
+  //       dispatch(dataAction.setTemp(8));   
+  //       dispatch(dataAction.setCurrent(78)); 
+  //     },4000)
     
-      return () => {
-        clearInterval(interval);
-      }
-    }
-  }, [deviceConnected])
+  //     return () => {
+  //       clearInterval(interval);
+  //     }
+  //   }
+  // }, [deviceConnected])
   
   async function read() {
     try {
