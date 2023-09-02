@@ -149,7 +149,7 @@ const Customers = () => {
   }
   
   useEffect(() => {
-    if(voltage['bms 0']&& temp['bms 0'] != undefined){
+    if(voltage['bms 0'] && temp['bms 0'] != undefined){
       
       var table_data = [];
       for(let i=0;i<num_bms;i++){

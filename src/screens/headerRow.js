@@ -174,18 +174,18 @@ function handleChanged(event) {
     // if (!verifyandParsePacket(transformedUint16Buffer,receivedData.buffer.byteLength)) {
     //     return;
     // }
+
     if (receivedBuffer[0] !== 0xA5A5) {
         return;
     }
-    
+
     let commandType = receivedBuffer[1];
     
     let numOfItems = receivedBuffer[2];
-    
+
     if (receivedBuffer[3 + numOfItems] !== 0xB5B5) {
         return;
     }
- 
   
     switch(commandType) {
         case 0:
@@ -194,7 +194,8 @@ function handleChanged(event) {
             let masteBMS = 1;
             let totalBMS = masteBMS+numOfSlaveBMS;
             let numOfSlaveBMS_string = "A="+totalBMS.toString()+";";
-            dispatch(dataAction.setBMS(totalBMS));
+            
+            dispatch(dataAction.setBMS(numOfSlaveBMS_string));
             dispatch(dataAction.setDeviceConnected(true));
             
             //dispatch here
@@ -204,7 +205,8 @@ function handleChanged(event) {
             // Total number of cells in the total stack
             let totalNumOfCells = receivedBuffer[3];
             let totalNumOfCells_string = "B="+totalNumOfCells.toString()+";";
-            //dispatch here
+            
+            dispatch(dataAction.setCells(totalNumOfCells_string));
             break;
         
         case 2:
@@ -215,7 +217,7 @@ function handleChanged(event) {
                 let cell_voltage_string = i.toString()+","+cell_voltage.toString()+";";
                 voltage += cell_voltage_string;
             }
-            //dispatch here
+            dispatch(dataAction.setVoltage(voltage));
             break;
         
         case 3:
@@ -227,6 +229,8 @@ function handleChanged(event) {
                 temperature += temp_string;
             }
             //dispatch here
+            console.log(temperature);
+            dispatch(dataAction.setTemp(temperature));
             break;
         
         case 4:
@@ -234,6 +238,7 @@ function handleChanged(event) {
             let current = receivedBuffer[3];
             let current_string = "I="+current.toString()+";";
             //dispatch here
+            dispatch(dataAction.setCurrent(current_string));
             break;
         
         default:
