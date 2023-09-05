@@ -192,7 +192,6 @@ const Customers = () => {
     for (var i = 0; i < num_bms; i++) {
       var voldata = voltage[`bms ${i}`];
       voldata = preprocess(voldata);
-      var curdata = current[i];
       var tempdata = temp[`bms ${i}`];
       tempdata = preprocess(tempdata);
 
@@ -206,7 +205,7 @@ const Customers = () => {
 
       var result = [head];
       for (var j = 0; j < voldata.length; j++) {
-        var row = [curdata].concat(voldata[j]);
+        var row = [current[j]].concat(voldata[j]);
         row = row.concat(tempdata[j]);
         result.push(row);
       }
