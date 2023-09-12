@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import VoltageLineChart from "./VoltageLineChart";
-import TempLineChart from "./TemperatureLineChart";
-import CurrentLineChart from "./CurrentLineChart";
 import styled from "styled-components";
+import CurrentLineChart from "./CurrentLineChart";
+import TempLineChart from "./TemperatureLineChart";
+import VoltageLineChart from "./VoltageLineChart";
 
-const TabWraper = styled.div`
-`;
+const TabWraper = styled.div``;
 
 const TabContainer = styled.div`
   border: 1px solid #ccc;
@@ -24,7 +23,7 @@ const Tab = styled.div`
 
 const TabNavigation = styled.div`
   display: flex;
-  flex-direction:row;
+  flex-direction: row;
   justify-content: center;
   padding: 10px 20px;
   text-align: center;
@@ -45,8 +44,6 @@ const VTIGraph = () => {
   const activeStyle = {
     color: "#fff",
   };
-
-  
 
   return (
     <TabWraper>
