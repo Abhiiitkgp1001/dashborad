@@ -7,6 +7,7 @@ const initialState = {
   voltage: {},
   temp: {},
   deviceConnected: false,
+  g_data: {},
 };
 
 const dataSlice = createSlice({
@@ -94,6 +95,10 @@ const dataSlice = createSlice({
         obj[`bms ${i}`].push(temp[i]);
       }
       state.temp = obj;
+    },
+    setG_data: (state, action) => {
+      var data = action.payload;
+      state.g_data = data;
     },
   },
 });

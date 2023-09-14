@@ -68,7 +68,7 @@ const HeaderRow = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (deviceConnected == true) {
+    if (deviceConnected === true) {
       dispatch(dataAction.setBMS());
       dispatch(dataAction.setCells());
       dispatch(dataAction.setVoltage(27));
@@ -78,7 +78,7 @@ const HeaderRow = () => {
   }, [deviceConnected]);
 
   useEffect(() => {
-    if (deviceConnected == true) {
+    if (deviceConnected === true) {
       const interval = setInterval(() => {
         dispatch(dataAction.setVoltage(27));
         dispatch(dataAction.setTemp(8));
@@ -277,7 +277,7 @@ const HeaderRow = () => {
             }}
           >
             <Heading style={{ color: "grey" }}>
-              {bms == 0 ? "No Device" : 1}
+              {bms === 0 ? "No Device" : 1}
             </Heading>
             <SizedBox />
             <SmallTwo children="Master BMS" />
@@ -290,7 +290,7 @@ const HeaderRow = () => {
             }}
           >
             <Heading style={{ color: "grey" }}>
-              {bms == 0 ? "No Device" : bms - 1}
+              {bms === 0 ? "No Device" : bms - 1}
             </Heading>
             <SizedBox />
             <SmallTwo children="Number of Slaves BMS" />
@@ -303,7 +303,7 @@ const HeaderRow = () => {
             }}
           >
             <Heading style={{ color: "grey" }}>
-              {bms == 0 ? "No Device" : cells}
+              {bms === 0 ? "No Device" : cells}
             </Heading>
             <SizedBox />
             <SmallTwo children="Total number of cells" />

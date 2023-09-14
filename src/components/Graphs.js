@@ -1,8 +1,9 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
-import CurrentLineChart from "./CurrentLineChart";
-import TempLineChart from "./TemperatureLineChart";
-import VoltageLineChart from "./VoltageLineChart";
+import TempLineChart from "./TemperaturLineGraph";
+import VoltageLineChart from "./VoltageLineGraph";
+import CurrentLineChart from "./currentLineGraph";
 
 const TabWraper = styled.div``;
 
@@ -20,7 +21,31 @@ const Tab = styled.div`
   cursor: pointer;
   border: 1px solid #ccc;
 `;
-
+const GreenTab = styled.div`
+  padding: 10px 20px;
+  margin: 5px;
+  width: fit-content;
+  text-align: center;
+  cursor: pointer;
+  background-color: #c9f7f5;
+  border-radius: 6px;
+  color: #1bc5bd;
+  cursor: pointer;
+  font-family: Poppins;
+  font-size: 12px;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  &:hover {
+    color: #c9f7f5;
+    background-color: #1bc5bd;
+  }
+`;
+const BMsSelectButtoneader = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
 const TabNavigation = styled.div`
   display: flex;
   flex-direction: row;
@@ -34,9 +59,28 @@ const TabContent = styled.div`
   margin: 20px;
 `;
 
+const GreenButton = styled.div`
+  margin-top: auto;
+  display: flex;
+  padding: 8px 16px;
+  background-color: #c9f7f5;
+  border-radius: 6px;
+  color: #1bc5bd;
+  cursor: pointer;
+  font-family: Poppins;
+  font-size: 12px;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  &:hover {
+    color: #c9f7f5;
+    background-color: #1bc5bd;
+  }
+`;
+
 const VTIGraph = () => {
   const [activeTab, setActiveTab] = useState(1);
-
+  const num_bms = useSelector((state) => state.bms);
   const handleTabClick = (tabNumber) => {
     setActiveTab(tabNumber);
   };
@@ -72,17 +116,17 @@ const VTIGraph = () => {
         <TabContent className="tab-content">
           {activeTab === 1 && (
             <div>
-              <VoltageLineChart selectedBmsIndex={0} />
+              <VoltageLineChart num_bms={num_bms} selectedBmsIndex={0} />
             </div>
           )}
           {activeTab === 2 && (
             <div>
-              <TempLineChart selectedBmsIndex={0} />
+              <TempLineChart num_bms={num_bms} selectedBmsIndex={0} />
             </div>
           )}
           {activeTab === 3 && (
             <div>
-              <CurrentLineChart selectedBmsIndex={0} />
+              <CurrentLineChart num_bms={num_bms} selectedBmsIndex={0} />
             </div>
           )}
         </TabContent>
