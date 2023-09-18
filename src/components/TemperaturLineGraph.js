@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
-import Chart from "react-apexcharts";
-import { useSelector } from "react-redux/es/hooks/useSelector";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
+import { dataAction } from "../store";
+import ChartLegend from "./ChartLegends/ChartLegend";
+import LineChart from "./LineChart";
+const _ = require("lodash");
 
 const Container = styled.div`
   display: flex;
@@ -61,8 +64,16 @@ const GreenButton = styled.div`
 `;
 
 const TemperatureLineChart = ({ num_bms, selectedBmsIndex }) => {
-  const temperature = useSelector((state) => state.temp);
   const [activeBMS, setActiveBMS] = useState(selectedBmsIndex);
+  const temp = useSelector((state) => state.temp);
+  const TempChartData = useSelector((state) => state.tempChartData);
+  const [ChartData, setChartData] = useState(TempChartData);
+  const dispatch = useDispatch();
+  const bms_buttons = Array.from(
+    { length: num_bms - 0 },
+    (_, index) => 0 + index
+  );
+
   const colors = [
     0xff5733, // Red
     0x33ff77, // Green
@@ -82,109 +93,88 @@ const TemperatureLineChart = ({ num_bms, selectedBmsIndex }) => {
     0x20b2aa, // Light Sea Green
   ];
 
-  console.log(num_bms);
-  let [g_data, setData] = useState({
-    options: {
-      chart: {
-        id: "apexchart-example",
-      },
-      xaxis: {
-        categories: [],
-      },
-    },
-    series: [],
-  });
-
   useEffect(() => {
-    // setBMSlist(
-    //   Array.from({ length: num_bms - 0 + 1 }, (_, index) => 0 + index)
-    // );
-    let series_data = {};
-    let x = [];
-    let temperature_list = [];
-    if (num_bms > 0) {
-      for (let j = 0; j < num_bms; j++) {
-        series_data["bms_" + j] = [];
-        if (Object.keys(temperature).length !== 0) {
-          for (let k = 0; k < temperature["bms " + j][0].length; k++) {
-            //length of all volatges coming in series will be same as number are temperatures are fixed
-            temperature_list = [];
-            for (let i = 0; i < temperature["bms " + j].length; i++) {
-              if (temperature["bms " + j][i][k] !== undefined) {
-                console.log(
-                  "bms " + j + "v_" + k,
-                  temperature["bms " + j][i][k]
-                );
-                temperature_list.push(temperature["bms " + j][i][k]);
+    setChartData((prevData) => {
+      const updatedData = _.cloneDeep(prevData);
+      // const currentDataIndex = temp[`bms 0`] ? temp[`bms 0`].length - 1 : 0;
+      const currentDataIndex = 0;
+      if (num_bms > 0) {
+        for (let j = 0; j < num_bms; j++) {
+          updatedData["bms_" + j] = [];
+          if (Object.keys(temp).length !== 0) {
+            for (let i = currentDataIndex; i < temp["bms " + j].length; i++) {
+              for (let k = 0; k < temp["bms " + j][0].length; k++) {
+                //length of all volatges coming in series will be same as number are voltages are fixed
+                if (temp["bms " + j][i][k] !== undefined) {
+                  if (k < updatedData["bms_" + j].length) {
+                    updatedData["bms_" + j][k].data.push(
+                      temp["bms " + j][i][k]
+                    );
+                  } else {
+                    updatedData["bms_" + j].push({
+                      name: "T_" + (k + 1),
+                      data: [],
+                      visible: prevData["bms_" + j]
+                        ? prevData["bms_" + j][k].visible
+                        : true,
+                    });
+                    updatedData["bms_" + j][k].data.push(
+                      temp["bms " + j][i][k]
+                    );
+                  }
+                } else {
+                  break;
+                }
               }
-              x.push(i);
             }
-
-            series_data["bms_" + j].push({
-              name: "T_" + k,
-              data: temperature_list,
-            });
           }
-        } else {
-          for (let j = 0; j < num_bms - 1; j++) {
-            series_data["bms_" + j] = [];
-          }
-          x = [];
         }
       }
-      const data = {
-        options: {
-          chart: {
-            id: "apexchart-example",
-          },
-          xaxis: {
-            categories: x,
-          },
-          stroke: {
-            width: 1,
-          },
-        },
-        series: series_data["bms_" + activeBMS],
-      };
-      setData(data);
-    } else {
-      const data = {
-        options: {
-          chart: {
-            id: "apexchart-example",
-          },
-          xaxis: {
-            categories: [],
-          },
-          stroke: {
-            width: 1,
-            curve: "smooth",
-          },
-        },
-        series: [],
-      };
-      setData(data);
-    }
-  }, [temperature, num_bms, activeBMS]);
-  console.log("numBms", num_bms);
+      return updatedData;
+    });
+  }, [temp]);
+
+  useEffect(() => {
+    dispatch(dataAction.setTempChartData(ChartData));
+  }, [ChartData]);
+
+  //   useEffect(() => {
+  //     setSelectedComponent(<LineChart keyIndex={`bms_${activeBMS}`} />);
+  //   }, [activeBMS]);
+
+  const toggleSeriesVisibility = (seriesIndex) => {
+    setChartData((prevData) => {
+      const updatedData = _.cloneDeep(prevData);
+      updatedData[`bms_${activeBMS}`][seriesIndex].visible =
+        !updatedData[`bms_${activeBMS}`][seriesIndex].visible;
+      return updatedData;
+    });
+  };
+
   return (
     <Container>
       <Container>
-        {Array.from({ length: num_bms - 0 + 1 }, (_, index) => 0 + index).map(
-          (bms) => {
-            <GreenTab onClick={() => setActiveBMS(bms)}>
-              {"BMS " + bms}
-            </GreenTab>;
-          }
-        )}
+        <TabContainer>
+          {bms_buttons.map((button) => (
+            <GreenTab key={button} onClick={() => setActiveBMS(button)}>
+              BMS{button}
+            </GreenTab>
+          ))}
+        </TabContainer>
       </Container>
-      <Chart
-        options={g_data.options}
-        series={g_data.series}
-        type="line"
-        width={500}
-        height={320}
-      />
+      <Container>
+        <LineChart
+          data={
+            ChartData[`bms_${activeBMS}`] ? ChartData[`bms_${activeBMS}`] : []
+          }
+        />
+        <ChartLegend
+          data={
+            ChartData[`bms_${activeBMS}`] ? ChartData[`bms_${activeBMS}`] : []
+          }
+          onLegendItemClick={toggleSeriesVisibility}
+        />
+      </Container>
     </Container>
   );
 };

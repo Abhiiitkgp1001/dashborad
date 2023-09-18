@@ -7,7 +7,8 @@ const initialState = {
   voltage: {},
   temp: {},
   deviceConnected: false,
-  g_data: {},
+  voltageChartData: {},
+  tempChartData: {},
 };
 
 const dataSlice = createSlice({
@@ -96,9 +97,13 @@ const dataSlice = createSlice({
       }
       state.temp = obj;
     },
-    setG_data: (state, action) => {
+    setTempChartData: (state, action) => {
       var data = action.payload;
-      state.g_data = data;
+      state.tempChartData = data;
+    },
+    setVoltageChartData: (state, action) => {
+      var data = action.payload;
+      state.voltageChartData = data;
     },
   },
 });

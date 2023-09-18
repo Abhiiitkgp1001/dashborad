@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { dataAction } from "../store";
+import ChartLegend from "./ChartLegends/ChartLegend";
 import LineChart from "./LineChart";
+const _ = require("lodash");
 
 const Container = styled.div`
   display: flex;
@@ -62,25 +64,16 @@ const GreenButton = styled.div`
 `;
 
 const VoltageLineChart = ({ num_bms, selectedBmsIndex }) => {
-  //   const voltage = useSelector((state) => state.voltage);
   const [activeBMS, setActiveBMS] = useState(selectedBmsIndex);
   const voltage = useSelector((state) => state.voltage);
+  const voltageChartData = useSelector((state) => state.voltageChartData);
+  const [ChartData, setChartData] = useState(voltageChartData);
   const dispatch = useDispatch();
-  const [selectedComponent, setSelectedComponent] = useState(null);
   const bms_buttons = Array.from(
     { length: num_bms - 0 },
     (_, index) => 0 + index
   );
-    const components = []
-    for (let i = 0; i < num_bms; i++) {
-        var t = `t ${i}`;
-        components.push({
-            dataIndex: t,
-            key: i,
-            render: (t) =>
-                <LineChart keyIndex={`bms_${t}`} />
-        })
-    }
+
   const colors = [
     0xff5733, // Red
     0x33ff77, // Green
@@ -99,56 +92,65 @@ const VoltageLineChart = ({ num_bms, selectedBmsIndex }) => {
     0x7b68ee, // Medium Slate Blue
     0x20b2aa, // Light Sea Green
   ];
+
   useEffect(() => {
-    let series_data = {};
-    let x = [];
-    let voltage_list = [];
-    if (num_bms > 0) {
-      for (let j = 0; j < num_bms; j++) {
-        series_data["bms_" + j] = [];
-        if (Object.keys(voltage).length !== 0) {
-          for (let k = 0; k < voltage["bms " + j][0].length; k++) {
-            //length of all volatges coming in series will be same as number are voltages are fixed
-            voltage_list = [];
-            for (let i = 0; i < voltage["bms " + j].length; i++) {
-              if (voltage["bms " + j][i][k] !== undefined) {
-                // console.log("bms " + j + "v_" + k, voltage["bms " + j][i][k]);
-                voltage_list.push(voltage["bms " + j][i][k]);
+    setChartData((prevData) => {
+      const updatedData = _.cloneDeep(prevData);
+      const currentDataIndex = 0;
+      if (num_bms > 0) {
+        for (let j = 0; j < num_bms; j++) {
+          updatedData["bms_" + j] = [];
+          if (Object.keys(voltage).length !== 0) {
+            for (
+              let i = currentDataIndex;
+              i < voltage["bms " + j].length;
+              i++
+            ) {
+              for (let k = 0; k < voltage["bms " + j][0].length; k++) {
+                //length of all volatges coming in series will be same as number are voltages are fixed
+                if (voltage["bms " + j][i][k] !== undefined) {
+                  if (k < updatedData["bms_" + j].length) {
+                    updatedData["bms_" + j][k].data.push(
+                      voltage["bms " + j][i][k]
+                    );
+                  } else {
+                    updatedData["bms_" + j].push({
+                      name: "V_" + (k + 1),
+                      data: [],
+                      visible: prevData["bms_" + j]
+                        ? prevData["bms_" + j][k].visible
+                        : true,
+                    });
+                    updatedData["bms_" + j][k].data.push(
+                      voltage["bms " + j][i][k]
+                    );
+                  }
+                } else {
+                  break;
+                }
               }
-              x.push(i);
             }
-            if (voltage["bms " + j][0][k] == undefined) {
-              break;
-            }
-            series_data["bms_" + j].push({
-              name: "V_" + (k + 1),
-              data: voltage_list,
-            });
           }
-        } else {
-          for (let j = 0; j < num_bms - 1; j++) {
-            series_data["bms_" + j] = [];
-          }
-          x = [];
         }
       }
-      const data = {
-        categories: x,
-        series: series_data,
-      };
-      dispatch(dataAction.setG_data(data));
-    } else {
-      const data = {
-        categories: [],
-        series: [],
-      };
-      dispatch(dataAction.setG_data(data));
-    }
+
+      return updatedData;
+    });
   }, [voltage]);
 
   useEffect(() => {
-    setSelectedComponent(<LineChart keyIndex={`bms_${activeBMS}`} />);
-  }, [activeBMS]);
+    dispatch(dataAction.setVoltageChartData(ChartData));
+  }, [ChartData]);
+
+  const toggleSeriesVisibility = (seriesIndex) => {
+    setChartData((prevData) => {
+      const updatedData = _.cloneDeep(prevData);
+      updatedData[`bms_${activeBMS}`][seriesIndex].visible =
+        !updatedData[`bms_${activeBMS}`][seriesIndex].visible;
+      return updatedData;
+    });
+  };
+
   return (
     <Container>
       <Container>
@@ -160,7 +162,19 @@ const VoltageLineChart = ({ num_bms, selectedBmsIndex }) => {
           ))}
         </TabContainer>
       </Container>
-      {selectedComponent}
+      <Container>
+        <LineChart
+          data={
+            ChartData[`bms_${activeBMS}`] ? ChartData[`bms_${activeBMS}`] : []
+          }
+        />
+        <ChartLegend
+          data={
+            ChartData[`bms_${activeBMS}`] ? ChartData[`bms_${activeBMS}`] : []
+          }
+          onLegendItemClick={toggleSeriesVisibility}
+        />
+      </Container>
     </Container>
   );
 };

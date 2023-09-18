@@ -94,7 +94,6 @@ const CurrentLineChart = ({ selectedBmsIndex }) => {
   });
 
   useEffect(() => {
-    console.log("CUrrent", current.length);
     let x = [];
     let series = [];
     let current_list = [];
@@ -119,6 +118,9 @@ const CurrentLineChart = ({ selectedBmsIndex }) => {
         },
         stroke: {
           width: 1,
+        },
+        xaxis: {
+          tickAmount: 10, // Adjust this number to control the number of x-axis ticks
         },
       },
       series: series,
