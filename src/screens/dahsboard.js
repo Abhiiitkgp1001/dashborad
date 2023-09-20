@@ -3,6 +3,7 @@ import VpBoard from './headerRow';
 import { Layout} from 'antd';
 import styled from 'styled-components';
 import Customers from './Boards';
+import { Outlet } from "react-router-dom";
 
 
 
@@ -20,7 +21,7 @@ const Dashboard = ()=>{
         <VpBoard/>
     
         <Customers/>
-        
+        <Outlet/>
       </Layout>
       
       

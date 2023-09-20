@@ -5,6 +5,8 @@ import { Col, Row } from 'antd';
 import SmallTwo from '../components/smallTwo';
 import { useSelector, useDispatch } from 'react-redux';
 import {dataAction} from '../store';
+import SmallOne from '../components/smallOne';
+import { useNavigate } from 'react-router-dom';
 const Container = styled.div`
     display: flex;
     flex-direction: column;
@@ -36,8 +38,16 @@ const Header = styled.div`
   justify-content: space-between;
 `;
 
+const Header2 = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+  
+`;
+
 const GreenButton = styled.div`
 margin-top: auto;
+margin-left: 8px;
 display: flex;
 padding: 8px 16px;
 background-color: #C9F7F5;
@@ -54,7 +64,23 @@ font-weight : 700;
   background-color: #1BC5BD;
 }
 `;
-
+const ConsoleDiv = styled.div`
+display: flex;
+flex-direction: column;
+overflow-y: scroll;
+align-items: baseline;
+gap: 12px;
+height: 250px;
+width: 100%;
+border-radius: 12px;
+background-color: #183D3D;
+padding: 12px 16px;
+color: #F4EEEE;
+font-family: Poppins;
+font-size: 15px;
+font-weight: 600;
+align-items: left;
+`;
 let bluetoothDeviceConnected;
 let gattRxCharecteristic;
 let gattTxCharecteristic;
@@ -66,32 +92,34 @@ const HeaderRow = () => {
   const bms = useSelector((state) => state.bms);
   const cells = useSelector((state) => state.cells);
   const deviceConnected = useSelector((state) => state.deviceConnected);
-  const dispatch = useDispatch()
+  const consoleArray = useSelector((state) => state.consoleArray);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-
-  // useEffect(() => {
-  //   if(deviceConnected == true){
-  //     dispatch(dataAction.setBMS());
-  //     dispatch(dataAction.setCells());
-  //     dispatch(dataAction.setVoltage(27));   
-  //     dispatch(dataAction.setTemp(8)); 
-  //     dispatch(dataAction.setCurrent(78));  
-  //   }  
-  // }, [deviceConnected])
+  useEffect(() => {
+    if(deviceConnected == true){
+      dispatch(dataAction.setBMS());
+      dispatch(dataAction.setCells());
+      dispatch(dataAction.setVoltage(27));   
+      dispatch(dataAction.setTemp(8)); 
+      dispatch(dataAction.setCurrent(78));  
+    }  
+  }, [deviceConnected])
   
-  // useEffect(() => {
-  //   if(deviceConnected == true){
-  //     const interval = setInterval(()=>{
-  //       dispatch(dataAction.setVoltage(27));
-  //       dispatch(dataAction.setTemp(8));   
-  //       dispatch(dataAction.setCurrent(78)); 
-  //     },4000)
+  useEffect(() => {
+    if(deviceConnected == true){
+      const interval = setInterval(()=>{
+        dispatch(dataAction.setVoltage(27));
+        dispatch(dataAction.setTemp(8));   
+        dispatch(dataAction.setCurrent(78)); 
+      },4000)
     
-  //     return () => {
-  //       clearInterval(interval);
-  //     }
-  //   }
-  // }, [deviceConnected])
+      return () => {
+        clearInterval(interval);
+      }
+    }
+  }, [deviceConnected])
+  
   
   async function read() {
     try {
@@ -255,10 +283,15 @@ function handleChanged(event) {
     <Container>
       <Header>
         <Heading children="Dashboard - BMS"/>
+        <Header>
         <GreenButton onClick={()=>{
-          read();
-          // dispatch(dataAction.setDeviceConnected(true));
+          // read();
+          dispatch(dataAction.setDeviceConnected(true));
         }}>Pair BMS</GreenButton>
+        <GreenButton onClick={()=>{
+          navigate('/import')
+        }}>Analysis Past Data</GreenButton>
+        </Header>
       </Header>
      
       <SizedBox2/>
@@ -294,8 +327,16 @@ function handleChanged(event) {
       
       
       </Row>
-      
-    
+      <Header2>
+      <SizedBox/>
+        <SmallOne children="Live Console"/>
+        <SizedBox2/>
+        <ConsoleDiv>
+          {
+            consoleArray.slice(0).reverse().map((item)=>(<div>{item}</div>))
+          }
+        </ConsoleDiv>
+      </Header2>
       
     </Container>
   )

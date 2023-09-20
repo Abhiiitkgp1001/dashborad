@@ -7,6 +7,7 @@ import VoltageRadialChart from '../components/VoltageRadialChart';
 import * as am5 from "@amcharts/amcharts5";
 import TempRadialChart from '../components/tempRadialChart';
 import { saveAs } from 'file-saver';
+import VTIGraph from '../components/Graphs';
 
 const Container = styled.div`
     display: flex;
@@ -241,6 +242,8 @@ const Customers = () => {
             }}
       />
       </TableContainer>}
+      <SizedBox/>
+      <VTIGraph/>
         </Container>
   );
 };
