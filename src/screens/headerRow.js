@@ -5,6 +5,9 @@ import styled from "styled-components";
 import Heading from "../components/heading";
 import SmallTwo from "../components/smallTwo";
 import { dataAction } from "../store";
+import { useNavigate } from 'react-router-dom';
+import SmallOne from '../components/smallOne';
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -34,9 +37,15 @@ const Header = styled.div`
   flex-direction: row;
   justify-content: space-between;
 `;
-
+const Header2 = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+  
+`;
 const GreenButton = styled.div`
   margin-top: auto;
+  margin-left: 8px;
   display: flex;
   padding: 8px 16px;
   background-color: #c9f7f5;
@@ -53,7 +62,23 @@ const GreenButton = styled.div`
     background-color: #1bc5bd;
   }
 `;
-
+const ConsoleDiv = styled.div`
+display: flex;
+flex-direction: column;
+overflow-y: scroll;
+align-items: baseline;
+gap: 12px;
+height: 250px;
+width: 100%;
+border-radius: 12px;
+background-color: #183D3D;
+padding: 12px 16px;
+color: #F4EEEE;
+font-family: Poppins;
+font-size: 15px;
+font-weight: 600;
+align-items: left;
+`;
 let bluetoothDeviceConnected;
 let gattRxCharecteristic;
 let gattTxCharecteristic;
@@ -65,6 +90,8 @@ const HeaderRow = () => {
   const bms = useSelector((state) => state.bms);
   const cells = useSelector((state) => state.cells);
   const deviceConnected = useSelector((state) => state.deviceConnected);
+  const consoleArray = useSelector((state) => state.consoleArray);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -258,14 +285,15 @@ const HeaderRow = () => {
     <Container>
       <Header>
         <Heading children="Dashboard - BMS" />
-        <GreenButton
-          onClick={() => {
-            // read();
-            dispatch(dataAction.setDeviceConnected(true));
-          }}
-        >
-          Pair BMS
-        </GreenButton>
+        <Header>
+        <GreenButton onClick={()=>{
+          // read();
+          dispatch(dataAction.setDeviceConnected(true));
+        }}>Pair BMS</GreenButton>
+        <GreenButton onClick={()=>{
+          navigate('/import')
+        }}>Analysis Past Data</GreenButton>
+        </Header>
       </Header>
 
       <SizedBox2 />
@@ -310,6 +338,16 @@ const HeaderRow = () => {
           </FeatureContainer>
         </Col>
       </Row>
+      <Header2>
+      <SizedBox/>
+        <SmallOne children="Live Console"/>
+        <SizedBox2/>
+        <ConsoleDiv>
+          {
+            consoleArray.slice(0).reverse().map((item)=>(<div>{item}</div>))
+          }
+        </ConsoleDiv>
+      </Header2>
     </Container>
   );
 };

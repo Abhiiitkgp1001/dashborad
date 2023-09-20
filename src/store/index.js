@@ -9,6 +9,7 @@ const initialState = {
   deviceConnected: false,
   voltageChartData: {},
   tempChartData: {},
+  consoleArray:[], 
 };
 
 const dataSlice = createSlice({
@@ -23,19 +24,22 @@ const dataSlice = createSlice({
       console.log(data);
       var data = "A=2;";
       var slicedData = data.substring(2).replace(";", "");
-
+      state.consoleArray.push(data);
       state.bms = slicedData;
     },
     setCells: (state, action) => {
       // var data = action.payload;
       var data = "B=20;";
       var slicedData = data.substring(2).replace(";", "");
+      state.consoleArray.push(data);
       state.cells = slicedData;
     },
     setCurrent: (state, action) => {
       var data = "I=18;";
       // var data = action.payload;
       var slicedData = data.substring(2).replace(";", "");
+      state.consoleArray.push(data);
+
       state.current.push(slicedData);
     },
     setVoltage: (state, action) => {
@@ -43,6 +47,7 @@ const dataSlice = createSlice({
         "V=0,80;1,2;2,4;3,8;4,2;5,6;6,2;7,2;8,1;9,0;10,99;11,32;12,2;13,6;14,2;15,2;16,1;17,0;18,99;19,32;20,13;";
       // var data = action.payload;
       var slicedData = data.substring(2).split(";");
+      state.consoleArray.push(data);
       slicedData.pop();
       var num_bms =
         slicedData.length % 16 == 0
@@ -73,6 +78,7 @@ const dataSlice = createSlice({
       // var data = action.payload;
       console.log(data);
       var slicedData = data.substring(2).split(";");
+      state.consoleArray.push(data);
       slicedData.pop();
       var num_bms =
         slicedData.length % 5 == 0
