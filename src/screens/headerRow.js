@@ -1,12 +1,12 @@
 import { Col, Row } from "antd";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Heading from "../components/heading";
+import SmallOne from "../components/smallOne";
 import SmallTwo from "../components/smallTwo";
 import { dataAction } from "../store";
-import { useNavigate } from 'react-router-dom';
-import SmallOne from '../components/smallOne';
 
 const Container = styled.div`
   display: flex;
@@ -41,7 +41,6 @@ const Header2 = styled.div`
   display: flex;
   flex-direction: column;
   align-items: baseline;
-  
 `;
 const GreenButton = styled.div`
   margin-top: auto;
@@ -63,21 +62,21 @@ const GreenButton = styled.div`
   }
 `;
 const ConsoleDiv = styled.div`
-display: flex;
-flex-direction: column;
-overflow-y: scroll;
-align-items: baseline;
-gap: 12px;
-height: 250px;
-width: 100%;
-border-radius: 12px;
-background-color: #183D3D;
-padding: 12px 16px;
-color: #F4EEEE;
-font-family: Poppins;
-font-size: 15px;
-font-weight: 600;
-align-items: left;
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  align-items: baseline;
+  gap: 12px;
+  height: 250px;
+  width: 100%;
+  border-radius: 12px;
+  background-color: #183d3d;
+  padding: 12px 16px;
+  color: #f4eeee;
+  font-family: Poppins;
+  font-size: 15px;
+  font-weight: 600;
+  align-items: left;
 `;
 let bluetoothDeviceConnected;
 let gattRxCharecteristic;
@@ -286,13 +285,21 @@ const HeaderRow = () => {
       <Header>
         <Heading children="Dashboard - BMS" />
         <Header>
-        <GreenButton onClick={()=>{
-          // read();
-          dispatch(dataAction.setDeviceConnected(true));
-        }}>Pair BMS</GreenButton>
-        <GreenButton onClick={()=>{
-          navigate('/import')
-        }}>Analysis Past Data</GreenButton>
+          <GreenButton
+            onClick={() => {
+              // read();
+              dispatch(dataAction.setDeviceConnected(true));
+            }}
+          >
+            Pair BMS
+          </GreenButton>
+          <GreenButton
+            onClick={() => {
+              navigate("/import");
+            }}
+          >
+            Analysis Past Data
+          </GreenButton>
         </Header>
       </Header>
 
@@ -339,13 +346,16 @@ const HeaderRow = () => {
         </Col>
       </Row>
       <Header2>
-      <SizedBox/>
-        <SmallOne children="Live Console"/>
-        <SizedBox2/>
+        <SizedBox />
+        <SmallOne children="Live Console" />
+        <SizedBox2 />
         <ConsoleDiv>
-          {
-            consoleArray.slice(0).reverse().map((item)=>(<div>{item}</div>))
-          }
+          {consoleArray
+            .slice(0)
+            .reverse()
+            .map((item, index) => (
+              <div key={index}>{item}</div>
+            ))}
         </ConsoleDiv>
       </Header2>
     </Container>
