@@ -134,7 +134,6 @@ const CurrentLineChart = ({ selectedBmsIndex }) => {
         options={g_data.options}
         series={g_data.series}
         type="line"
-        width={500}
         height={320}
       />
     </Container>

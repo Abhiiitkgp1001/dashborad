@@ -1,0 +1,79 @@
+.bms-button-active {
+  padding: 10px 10px;
+  margin: 5px;
+  width: fit-content;
+  text-align: center;
+  cursor: pointer;
+  background-color: #b7efec;
+  color: #385d5d;
+  cursor: pointer;
+  font-family: Poppins;
+  font-size: 15px;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  &:hover {
+    color: #c9f7f5;
+    background-color: #1bc5bd;
+  }
+}
+
+.bms-button-inactive {
+  padding: 10px 10px;
+  margin: 5px;
+  width: fit-content;
+  text-align: center;
+  cursor: pointer;
+  background-color: #dcedec;
+  color: #71a398;
+  cursor: pointer;
+  font-family: Poppins;
+  font-size: 15px;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  &:hover {
+    color: #c9f7f5;
+    background-color: #1bc5bd;
+  }
+}
+
+.play-btn {
+  padding: 10px 10px;
+  margin: 5px;
+  width: fit-content;
+  text-align: center;
+  cursor: pointer;
+  background-color: #32ba4b;
+  color: #e3edeb;
+  cursor: pointer;
+  font-family: Poppins;
+  font-size: 15px;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  &:hover {
+    color: #c9f7f5;
+    background-color: #1bc5bd;
+  }
+}
+
+.pause-btn {
+  padding: 10px 10px;
+  margin: 5px;
+  width: fit-content;
+  text-align: center;
+  cursor: pointer;
+  background-color: #f02409;
+  color: #e9f5f4;
+  cursor: pointer;
+  font-family: Poppins;
+  font-size: 15px;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  &:hover {
+    color: #c9f7f5;
+    background-color: #1bc5bd;
+  }
+}

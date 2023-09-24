@@ -7,8 +7,11 @@ const initialState = {
   voltage: {},
   temp: {},
   deviceConnected: false,
-  voltageChartData: {},
-  tempChartData: {},
+  voltageChartData: [],
+  tempChartData: [],
+  graphActiveTab: [],
+  graphActiveBMSIndex: [],
+  graphPlayPause: [],
 };
 
 const dataSlice = createSlice({
@@ -20,7 +23,7 @@ const dataSlice = createSlice({
     },
     setBMS: (state, action) => {
       // var data = action.payload;
-      console.log(data);
+      // console.log(data);
       var data = "A=2;";
       var slicedData = data.substring(2).replace(";", "");
 
@@ -65,13 +68,13 @@ const dataSlice = createSlice({
         if (!Object.keys(obj).includes(`bms ${i}`)) obj[`bms ${i}`] = [];
         obj[`bms ${i}`].push(vol[i]);
       }
-      console.log(obj);
+      // console.log(obj);
       state.voltage = obj;
     },
     setTemp: (state, action) => {
       var data = "T=0,1;1,2;2,4;3,8;4,2;5,6;6,2;7,2;";
       // var data = action.payload;
-      console.log(data);
+      // console.log(data);
       var slicedData = data.substring(2).split(";");
       slicedData.pop();
       var num_bms =
@@ -99,11 +102,59 @@ const dataSlice = createSlice({
     },
     setTempChartData: (state, action) => {
       var data = action.payload;
-      state.tempChartData = data;
+      let prevChartData = state.tempChartData.filter(
+        (chart) => chart.id !== data.id
+      );
+      if (data.btn === null) {
+        state.tempChartData = [...prevChartData];
+      } else {
+        state.tempChartData = [...prevChartData, data];
+      }
     },
     setVoltageChartData: (state, action) => {
       var data = action.payload;
-      state.voltageChartData = data;
+      let prevChartData = state.voltageChartData.filter(
+        (chart) => chart.id !== data.id
+      );
+      if (data.data === null) {
+        state.voltageChartData = [...prevChartData];
+      } else {
+        state.voltageChartData = [...prevChartData, data];
+      }
+    },
+
+    setGraphActiveTab: (state, action) => {
+      var data = action.payload;
+      let prevChartData = state.graphActiveTab.filter(
+        (chart) => chart.id !== data.id
+      );
+      if (data.tabNumber === null) {
+        state.graphActiveTab = [...prevChartData];
+      } else {
+        state.graphActiveTab = [...prevChartData, data];
+      }
+    },
+    setGraphActiveBMSIndex: (state, action) => {
+      var data = action.payload;
+      let prevChartData = state.graphActiveBMSIndex.filter(
+        (chart) => chart.id !== data.id
+      );
+      if (data.bms === null) {
+        state.graphActiveBMSIndex = [...prevChartData];
+      } else {
+        state.graphActiveBMSIndex = [...prevChartData, data];
+      }
+    },
+    setGraphPlayPause: (state, action) => {
+      var data = action.payload;
+      let prevChartData = state.graphPlayPause.filter(
+        (chart) => chart.id !== data.id
+      );
+      if (data.bms === null) {
+        state.graphPlayPause = [...prevChartData];
+      } else {
+        state.graphPlayPause = [...prevChartData, data];
+      }
     },
   },
 });
