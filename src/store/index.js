@@ -39,7 +39,7 @@ const dataSlice = createSlice({
       state.cells = slicedData;
     },
     setCurrent: (state, action) => {
-      var data = "I=18;";
+      var data = `I=${Math.round(Math.random()*1000)/100};`;
       // var data = action.payload;
       var slicedData = data.substring(2).replace(";", "");
       state.consoleArray.push(data);

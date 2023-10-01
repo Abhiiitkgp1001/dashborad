@@ -2,11 +2,18 @@ import React, { useState, useEffect } from 'react';
 import Chart from "react-apexcharts";
 import styled from 'styled-components'
 import { mean, median, mode, standardDeviation } from '../helpers/utils';
+import { FullScreen, useFullScreenHandle } from "react-full-screen";
+
 import SmallOne from './smallOne';
 const Container = styled.div`
     display: flex;
     flex-direction: column;
     padding : 28px 24px;    
+`;
+const SizedBox = styled.div`
+    display: flex;
+    flex-direction: column;
+    height:8px;  
 `;
 const Header = styled.div`
   display: flex;
@@ -14,7 +21,11 @@ const Header = styled.div`
   justify-content: space-between;
 `;
 
-
+const WhiteContainer = styled.div`
+    display: flex;
+    flex-direction: column; 
+    background-color : white;  
+`;
 const LegendContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -131,6 +142,7 @@ const AreaChart = (props) => {
   const [data_mean, setDataMean] = useState([]);
   const [data_median, setDataMedian] = useState([]);
   const [data_std, setDataStd] = useState([]);
+  const graphFullScreen = useFullScreenHandle();
   const [chartData, setChartData] = useState({
     series : [],
     options: chart_options
@@ -164,16 +176,27 @@ const AreaChart = (props) => {
         
         <Header>
           <div/>
+          <Header>
           <RedButton onClick={()=>{
             props.removeGraph(props.index);
           }}>Delete Graph</RedButton>
-          </Header>  
+          <RedButton onClick={graphFullScreen.enter}>FullScreen</RedButton>
+          </Header>
+          </Header> 
+          <SizedBox/>
+          <FullScreen  handle={graphFullScreen}>
+          <WhiteContainer style={
+            {
+              height:graphFullScreen.active?'100%':'440px',
+              padding: graphFullScreen.active? '20px 24px':'0px'
+            }
+          }>
           <Chart
             id={props.id}
             options={chartData.options}
             series={chartData.series}
             type="line"
-            height='360px'
+            height={graphFullScreen.active?'90%':'360px'}
           />
           <LegendContainer>
           {
@@ -188,6 +211,9 @@ const AreaChart = (props) => {
             >{props.data.legend[item].name}</FeatureContainer>})
           }
           </LegendContainer>
+          </WhiteContainer>
+            </FullScreen> 
+          
           
       </Container>
   );

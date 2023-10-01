@@ -1,6 +1,7 @@
 import { Col, Row } from "antd";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Heading from "../components/heading";
@@ -40,7 +41,6 @@ const Header = styled.div`
 const Header2 = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: baseline;
 `;
 const GreenButton = styled.div`
   margin-top: auto;
@@ -92,7 +92,9 @@ const HeaderRow = () => {
   const consoleArray = useSelector((state) => state.consoleArray);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const consoleFullScreen = useFullScreenHandle();
+  const [playConsole, setPlayConsole] = useState(true);
+  const [showConsole, setShowConsole] = useState([]);
   useEffect(() => {
     if (deviceConnected === true) {
       dispatch(dataAction.setBMS());
@@ -118,6 +120,14 @@ const HeaderRow = () => {
       };
     }
   }, [deviceConnected]);
+
+  useEffect(() => {
+    if(playConsole){
+      setShowConsole(consoleArray);
+    }
+  }, [playConsole,consoleArray])
+  
+
 
   async function read() {
     try {
@@ -347,19 +357,32 @@ const HeaderRow = () => {
           </FeatureContainer>
         </Col>
       </Row>
-      <Header2>
+      { deviceConnected && <Header2>
         <SizedBox />
+        <Header>
         <SmallOne children="Live Console" />
+       <Header>
+       <GreenButton onClick={()=>setPlayConsole(!playConsole)}>{playConsole?"Pause":"Play"}</GreenButton>
+       <GreenButton onClick={consoleFullScreen.enter}>FullScreen</GreenButton>
+       </Header>
+        
+        </Header>
+        
         <SizedBox2 />
-        <ConsoleDiv>
-          {consoleArray
+        <FullScreen handle={consoleFullScreen}>
+        <ConsoleDiv style={{
+          height: consoleFullScreen.active ? '100vh':'250px'
+        }}>
+          {showConsole
             .slice(0)
             .reverse()
             .map((item, index) => (
               <div key={index}>{item}</div>
             ))}
         </ConsoleDiv>
-      </Header2>
+      </FullScreen>
+        
+      </Header2>}
     </Container>
   );
 };
