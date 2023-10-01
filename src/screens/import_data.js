@@ -116,6 +116,9 @@ gap:12px;
 margin-top: 8px;
 overflow-x : scroll;
 width: 100%;
+.noscrollbar::-webkit-scrollbar {
+  display: none;
+}
 `;
 const ImportData = () => {
     const [bms_data, setBMSData] = useState({});
@@ -166,7 +169,7 @@ const ImportData = () => {
                             legend : legend
                         }
                     }
-                    console.log(parsedData);
+                    // console.log(parsedData);
                     setBMSData(parsedData);
                     setBMSGraphs(graphs);
 
@@ -265,7 +268,7 @@ const ImportData = () => {
         { bms_active!=-1 && <div>
         <SizedBox/>
           <SmallOne>Mean</SmallOne>
-          <CalcOuterContainer>
+          <CalcOuterContainer className='noscroll'>
             {
               data_mean[`BMS ${bms_active}`].map((item)=><CalcContainer style={{
                 backgroundColor: colors[0]
@@ -277,7 +280,7 @@ const ImportData = () => {
           </CalcOuterContainer>
           <SizedBox2/>
           <SmallOne>Median</SmallOne>
-          <CalcOuterContainer>
+          <CalcOuterContainer className='noscroll'>
             {
               data_median[`BMS ${bms_active}`].map((item)=><CalcContainer style={{
                 backgroundColor: colors[1]
@@ -289,7 +292,7 @@ const ImportData = () => {
           </CalcOuterContainer>
           <SizedBox2/>
           <SmallOne>Standard Deviation</SmallOne>
-          <CalcOuterContainer>
+          <CalcOuterContainer className='noscroll'>
             {
               data_std[`BMS ${bms_active}`].map((item)=><CalcContainer style={{
                 backgroundColor: colors[2]

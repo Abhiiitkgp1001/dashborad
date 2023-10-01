@@ -75,6 +75,71 @@ font-weight : 700;
 }
 `;
 var filtered_data ={};
+var chart_options =  {   
+    
+  dataLabels: {
+    enabled: false
+  },
+  stroke: {
+    curve: 'smooth'
+  },
+  markers: {
+    size: 3.5,
+  },
+  // xaxis: {
+  //   // tickAmount: props.tickAmount,
+  //   axisBorder: {
+  //     show: false
+  //   },
+  //   axisTicks: {
+  //     show: true
+  //   }
+  // },
+  yaxis: {
+    tickAmount: 4,
+    floating: false,
+  
+    labels: {
+      style: {
+        colors: '#8e8da4',
+      },
+      offsetY: -7,
+      offsetX: 0,
+    },
+    axisBorder: {
+      show: false,
+    },
+    axisTicks: {
+      show: false
+    }
+  },
+  fill: {
+    opacity: 0.5
+  },
+  tooltip: {
+    x: {
+      format: "yyyy",
+    },
+    fixed: {
+      enabled: false,
+      position: 'topRight'
+    }
+  },
+  legend:{
+      show:false,
+  },
+  grid: {
+    yaxis: {
+      lines: {
+        offsetX: -30
+      }
+    },
+    padding: {
+      left: 20
+    }
+  },
+  
+};
 
 const AreaChart = (props) => {
   const [data_mean, setDataMean] = useState([]);
@@ -85,17 +150,9 @@ const AreaChart = (props) => {
     series : [],
     options: chart_options
   });
-  var chart_options =  {    
-    dataLabels: {
-      enabled: false
-    },
-    stroke: {
-      curve: 'smooth'
-    },
-    markers: {
-      size: 3.5,
-    },
-    xaxis: {
+  
+  useEffect(() => {
+    var xaxis = {
       tickAmount: props.tickAmount,
       axisBorder: {
         show: false
@@ -103,54 +160,9 @@ const AreaChart = (props) => {
       axisTicks: {
         show: true
       }
-    },
-    yaxis: {
-      tickAmount: 4,
-      floating: false,
-    
-      labels: {
-        style: {
-          colors: '#8e8da4',
-        },
-        offsetY: -7,
-        offsetX: 0,
-      },
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false
-      }
-    },
-    fill: {
-      opacity: 0.5
-    },
-    tooltip: {
-      x: {
-        format: "yyyy",
-      },
-      fixed: {
-        enabled: false,
-        position: 'topRight'
-      }
-    },
-    legend:{
-        show:false,
-    },
-    grid: {
-      yaxis: {
-        lines: {
-          offsetX: -30
-        }
-      },
-      padding: {
-        left: 20
-      }
-    },
-    
-  };
+    };
+    chart_options = {...chart_options,xaxis};
 
-  useEffect(() => {
       var filted_data_via_legends = [];
       console.log(props.tickAmount);
     for(let i in props.data.legend){
@@ -190,7 +202,7 @@ const AreaChart = (props) => {
           <FullScreen  handle={graphFullScreen}>
           <WhiteContainer style={
             {
-              height:graphFullScreen.active?'100%':'440px',
+              height:graphFullScreen.active?'100%':'450px',
               padding: graphFullScreen.active? '20px 24px':'0px'
             }
           }>
@@ -198,10 +210,10 @@ const AreaChart = (props) => {
             id={props.id}
             options={chartData.options}
             series={chartData.series}
-            type="line"
+            type='line'
             height={graphFullScreen.active?'90%':'360px'}
           />
-          <LegendContainer>
+          <LegendContainer className='noscroll'>
           {
             Object.keys(props.data.legend).map((item,index)=>{
             return <FeatureContainer style={{
