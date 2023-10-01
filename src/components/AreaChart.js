@@ -75,69 +75,7 @@ font-weight : 700;
 }
 `;
 var filtered_data ={};
-var chart_options =  {    
-  dataLabels: {
-    enabled: false
-  },
-  stroke: {
-    curve: 'smooth'
-  },
-  markers: {
-    size: 5,
-  },
-  xaxis: {
-    axisBorder: {
-      show: false
-    },
-    axisTicks: {
-      show: false
-    }
-  },
-  yaxis: {
-    tickAmount: 4,
-    floating: false,
-  
-    labels: {
-      style: {
-        colors: '#8e8da4',
-      },
-      offsetY: -7,
-      offsetX: 0,
-    },
-    axisBorder: {
-      show: false,
-    },
-    axisTicks: {
-      show: false
-    }
-  },
-  fill: {
-    opacity: 0.5
-  },
-  tooltip: {
-    x: {
-      format: "yyyy",
-    },
-    fixed: {
-      enabled: false,
-      position: 'topRight'
-    }
-  },
-  legend:{
-      show:false,
-  },
-  grid: {
-    yaxis: {
-      lines: {
-        offsetX: -30
-      }
-    },
-    padding: {
-      left: 20
-    }
-  },
-  
-};
+
 const AreaChart = (props) => {
   const [data_mean, setDataMean] = useState([]);
   const [data_median, setDataMedian] = useState([]);
@@ -147,9 +85,74 @@ const AreaChart = (props) => {
     series : [],
     options: chart_options
   });
+  var chart_options =  {    
+    dataLabels: {
+      enabled: false
+    },
+    stroke: {
+      curve: 'smooth'
+    },
+    markers: {
+      size: 3.5,
+    },
+    xaxis: {
+      tickAmount: props.tickAmount,
+      axisBorder: {
+        show: false
+      },
+      axisTicks: {
+        show: true
+      }
+    },
+    yaxis: {
+      tickAmount: 4,
+      floating: false,
+    
+      labels: {
+        style: {
+          colors: '#8e8da4',
+        },
+        offsetY: -7,
+        offsetX: 0,
+      },
+      axisBorder: {
+        show: false,
+      },
+      axisTicks: {
+        show: false
+      }
+    },
+    fill: {
+      opacity: 0.5
+    },
+    tooltip: {
+      x: {
+        format: "yyyy",
+      },
+      fixed: {
+        enabled: false,
+        position: 'topRight'
+      }
+    },
+    legend:{
+        show:false,
+    },
+    grid: {
+      yaxis: {
+        lines: {
+          offsetX: -30
+        }
+      },
+      padding: {
+        left: 20
+      }
+    },
+    
+  };
 
   useEffect(() => {
       var filted_data_via_legends = [];
+      console.log(props.tickAmount);
     for(let i in props.data.legend){
       if(props.data.legend[i].visible==true){
         filted_data_via_legends.push({

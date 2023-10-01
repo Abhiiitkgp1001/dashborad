@@ -304,11 +304,15 @@ const ImportData = () => {
         {   bms_active !=-1&&
             <ColContainer>
                 {
-                    bms_graphs[`BMS ${bms_active}`].map((item,index)=>(
-                        <AreaChart key={index} data={item} index={index} changeLegendVisiblity={changeLegendVisiblity}
+                    bms_graphs[`BMS ${bms_active}`].map((item,index)=>{
+                        var tickAmount = Math.ceil(item.data.Current.length/20);
+                        // console.log(Math.ceil(tickAmount/20));
+                        return (
+                          <AreaChart tickAmount={tickAmount} key={index} data={item} index={index} changeLegendVisiblity={changeLegendVisiblity}
                             removeGraph={removeGraph}
                         />
-                    ))
+                        );
+                        })
                 }
                 {/* <AreaChart data={bms_data} type="voltage" index={bms_active}/>
                 <AreaChart data={bms_data} type="temp" index={bms_active}/>
