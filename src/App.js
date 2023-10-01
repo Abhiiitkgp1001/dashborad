@@ -1,6 +1,6 @@
-import logo from './logo.svg';
+
 import './App.css';
-import Dashboard from './screens/dahsboard';
+import Dashboard from './screens/Dashboard/dashboard';
 import { Routes, Route } from "react-router-dom";
 import ImportData from './screens/import_data';
 function App() {

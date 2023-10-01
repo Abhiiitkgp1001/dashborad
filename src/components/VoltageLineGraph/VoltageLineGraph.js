@@ -52,6 +52,7 @@ const MemoizedLineChart = React.memo(LineChart);
 const MemoizedChartLegend = React.memo(ChartLegend);
 
 const VoltageLineChart = ({ graphId, graphTab, num_bms, selectedBmsIndex }) => {
+  const time = useSelector((state) => state.timestamp);
   const currentPlayOrPause = useSelector((state) => state.graphPlayPause);
   const currentBMS = useSelector((state) => state.graphActiveBMSIndex);
   const voltage = useSelector((state) => state.voltage);
@@ -127,9 +128,10 @@ const VoltageLineChart = ({ graphId, graphTab, num_bms, selectedBmsIndex }) => {
                   //length of all volatges coming in series will be same as number are voltages are fixed
                   if (voltage["bms " + j][i][k] !== undefined) {
                     if (k < updatedData["bms_" + j].length) {
-                      updatedData["bms_" + j][k].data.push(
-                        voltage["bms " + j][i][k]
-                      );
+                      updatedData["bms_" + j][k].data.push({
+                        x: time[i],
+                        y: voltage["bms " + j][i][k],
+                      });
                     } else {
                       updatedData["bms_" + j].push({
                         name: "V_" + (k + 1),
@@ -138,9 +140,10 @@ const VoltageLineChart = ({ graphId, graphTab, num_bms, selectedBmsIndex }) => {
                           ? prevData.data["bms_" + j][k].visible
                           : true,
                       });
-                      updatedData["bms_" + j][k].data.push(
-                        voltage["bms " + j][i][k]
-                      );
+                      updatedData["bms_" + j][k].data.push({
+                        x: time[i],
+                        y: voltage["bms " + j][i][k],
+                      });
                     }
                   } else {
                     break;
@@ -154,7 +157,7 @@ const VoltageLineChart = ({ graphId, graphTab, num_bms, selectedBmsIndex }) => {
 
       return { id: graphId, data: updatedData };
     });
-  }, [voltage]);
+  }, [voltage, time]);
 
   useEffect(() => {
     dispatch(dataAction.setVoltageChartData(ChartData));
@@ -194,22 +197,22 @@ const VoltageLineChart = ({ graphId, graphTab, num_bms, selectedBmsIndex }) => {
     );
   }, [playPause]);
 
-  useEffect(() => {
-    return () => {
-      dispatch(
-        dataAction.setGraphActiveBMSIndex({
-          id: graphId + "_" + graphTab,
-          bms: null,
-        })
-      );
-      dispatch(
-        dataAction.setGraphPlayPause({
-          id: graphId + "_" + graphTab,
-          btn: null,
-        })
-      );
-    };
-  }, []);
+  // useEffect(() => {
+  //   return () => {
+  //     dispatch(
+  //       dataAction.setGraphActiveBMSIndex({
+  //         id: graphId + "_" + graphTab,
+  //         bms: null,
+  //       })
+  //     );
+  //     dispatch(
+  //       dataAction.setGraphPlayPause({
+  //         id: graphId + "_" + graphTab,
+  //         btn: null,
+  //       })
+  //     );
+  //   };
+  // }, []);
 
   // console.log("Active BMS: in ", graphId, currentBMS);
   return (

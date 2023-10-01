@@ -6,13 +6,14 @@ const initialState = {
   current: [],
   voltage: {},
   temp: {},
+  timestamp: [],
   deviceConnected: false,
   voltageChartData: [],
   tempChartData: [],
   graphActiveTab: [],
   graphActiveBMSIndex: [],
   graphPlayPause: [],
-  consoleArray:[],
+  consoleArray: [],
 };
 
 const dataSlice = createSlice({
@@ -156,11 +157,17 @@ const dataSlice = createSlice({
       let prevChartData = state.graphPlayPause.filter(
         (chart) => chart.id !== data.id
       );
-      if (data.bms === null) {
+      if (data.btn === null) {
         state.graphPlayPause = [...prevChartData];
       } else {
         state.graphPlayPause = [...prevChartData, data];
       }
+    },
+    setTimeStamp: (state, action) => {
+      var data = action.payload;
+      var currentdate = new Date().getTime() + 330 * 60 * 1000;
+      state.timestamp.push(currentdate);
+      // console.log(currentdate);
     },
   },
 });

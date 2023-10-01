@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
-import { useSelector } from "react-redux/es/hooks/useSelector";
+import { useSelector } from "react-redux";
+
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -61,6 +62,7 @@ const GreenButton = styled.div`
 `;
 
 const CurrentLineChart = ({ selectedBmsIndex }) => {
+  const time = useSelector((state) => state.timestamp);
   const current = useSelector((state) => state.current);
   const colors = [
     0xff5733, // Red
@@ -100,7 +102,10 @@ const CurrentLineChart = ({ selectedBmsIndex }) => {
     if (current.length !== 0) {
       for (let k = 0; k < current.length; k++) {
         //length of all volatges coming in series will be same as number are voltages are fixed
-        current_list.push(current[k]);
+        current_list.push({
+          x: time[k],
+          y: current[k],
+        });
         x.push(k);
       }
     }
@@ -109,29 +114,36 @@ const CurrentLineChart = ({ selectedBmsIndex }) => {
       data: current_list,
     });
     const data = {
-      options: {
-        chart: {
-          id: "1apexchart-example",
-        },
-        xaxis: {
-          categories: x,
-        },
-        stroke: {
-          width: 1,
-        },
-        xaxis: {
-          tickAmount: 10, // Adjust this number to control the number of x-axis ticks
-        },
-      },
       series: series,
     };
     setData(data);
-  }, [current]);
+  }, [current, time]);
+  const chartOptions = {
+    id: "chart",
+    stroke: {
+      width: 1,
+    },
+    legend: {
+      show: false,
+    },
+    xaxis: {
+      type: "datetime",
+      labels: {
+        datetimeFormatter: {
+          year: "yyyy",
+          month: "MMM 'yy",
+          day: "dd MMM",
+          hour: "HH:mm",
+        },
+      },
+      tickAmount: 10, // Adjust this number to control the number of x-axis ticks
+    },
+  };
 
   return (
     <Container>
       <Chart
-        options={g_data.options}
+        options={chartOptions}
         series={g_data.series}
         type="line"
         height={320}

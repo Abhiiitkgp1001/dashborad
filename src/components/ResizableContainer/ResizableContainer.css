@@ -1,0 +1,12 @@
+.resizable-container {
+  position: relative;
+  background-color: #f0f0f0;
+  border: 10px solid #97f0d7;
+  overflow: scroll; /* Hide overflowing content when resized */
+  cursor: auto;
+  align-items: flex-start;
+}
+
+.child-component {
+  padding: 10px;
+}

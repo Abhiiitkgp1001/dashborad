@@ -57,6 +57,7 @@ const TemperatureLineChart = ({
   num_bms,
   selectedBmsIndex,
 }) => {
+  const time = useSelector((state) => state.timestamp);
   const currentBMS = useSelector((state) => state.graphActiveBMSIndex);
   const temp = useSelector((state) => state.temp);
   const currentPlayOrPause = useSelector((state) => state.graphPlayPause);
@@ -122,6 +123,7 @@ const TemperatureLineChart = ({
       const updatedData = _.cloneDeep(prevData.data);
       // const currentDataIndex = temp[`bms 0`] ? temp[`bms 0`].length - 1 : 0;
       const currentDataIndex = 0;
+      console.log("playpause", playPause.btn);
       if (playPause.btn) {
         if (num_bms > 0) {
           for (let j = 0; j < num_bms; j++) {
@@ -132,9 +134,10 @@ const TemperatureLineChart = ({
                   //length of all volatges coming in series will be same as number are voltages are fixed
                   if (temp["bms " + j][i][k] !== undefined) {
                     if (k < updatedData["bms_" + j].length) {
-                      updatedData["bms_" + j][k].data.push(
-                        temp["bms " + j][i][k]
-                      );
+                      updatedData["bms_" + j][k].data.push({
+                        x: time[i],
+                        y: temp["bms " + j][i][k],
+                      });
                     } else {
                       updatedData["bms_" + j].push({
                         name: "T_" + (k + 1),
@@ -143,9 +146,10 @@ const TemperatureLineChart = ({
                           ? prevData.data["bms_" + j][k].visible
                           : true,
                       });
-                      updatedData["bms_" + j][k].data.push(
-                        temp["bms " + j][i][k]
-                      );
+                      updatedData["bms_" + j][k].data.push({
+                        x: time[i],
+                        y: temp["bms " + j][i][k],
+                      });
                     }
                   } else {
                     break;
@@ -160,7 +164,7 @@ const TemperatureLineChart = ({
       // console.log("updated data: " + updatedData);
       return { id: graphId, data: updatedData };
     });
-  }, [temp]);
+  }, [temp, time]);
 
   useEffect(() => {
     dispatch(dataAction.setTempChartData(ChartData));
@@ -200,22 +204,22 @@ const TemperatureLineChart = ({
     );
   }, [activeBMS]);
 
-  useEffect(() => {
-    return () => {
-      dispatch(
-        dataAction.setGraphActiveBMSIndex({
-          id: graphId + "_" + graphTab,
-          bms: null,
-        })
-      );
-      dispatch(
-        dataAction.setGraphPlayPause({
-          id: graphId + "_" + graphTab,
-          btn: null,
-        })
-      );
-    };
-  }, []);
+  // useEffect(() => {
+  //   return () => {
+  //     dispatch(
+  //       dataAction.setGraphActiveBMSIndex({
+  //         id: graphId + "_" + graphTab,
+  //         bms: null,
+  //       })
+  //     );
+  //     dispatch(
+  //       dataAction.setGraphPlayPause({
+  //         id: graphId + "_" + graphTab,
+  //         btn: null,
+  //       })
+  //     );
+  //   };
+  // }, []);
   // console.log("Active BMS: in ", graphId, currentBMS);
   // console.log("Active playPause: in ", playPause.btn);
   // console.log("chart data", ChartData);

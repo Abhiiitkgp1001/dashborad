@@ -2,10 +2,10 @@ import { Layout } from "antd";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
-import VITGraph from "../components/Graphs/Graphs";
-import { dataAction } from "../store";
-import Customers from "./Boards";
-import VpBoard from "./headerRow";
+import VITGraph from "../../components/Graphs/Graphs";
+import { dataAction } from "../../store";
+import Customers from "../Boards";
+import VpBoard from "../headerRow";
 
 const AddGraphContainer = styled.div`
   display: flex;
@@ -83,11 +83,16 @@ const Dashboard = () => {
       // console.log("after removing", updatedComponents);
       dispatch(dataAction.setTempChartData({ id: keyToRemove, data: null }));
       dispatch(dataAction.setVoltageChartData({ id: keyToRemove, data: null }));
-      
 
       return [...updatedComponents];
     });
   };
+  const layout = {
+    display: "flex",
+    flexDirection: "column",
+    margin: "auto",
+  };
+
   // console.log("component before adding any graph ", components);
   return (
     <AppContainer>
@@ -98,12 +103,14 @@ const Dashboard = () => {
           <AddGraphContainer>
             <GreenButton onClick={addComponent}> Add New Graph</GreenButton>
           </AddGraphContainer>
+
           <div id="component-container">
             {components.map((component, index) => (
               <div key={index}>{component}</div>
             ))}
           </div>
         </div>
+
         <PaddingContainer />
       </Layout>
     </AppContainer>

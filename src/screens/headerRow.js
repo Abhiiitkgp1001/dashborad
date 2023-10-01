@@ -100,6 +100,7 @@ const HeaderRow = () => {
       dispatch(dataAction.setVoltage(27));
       dispatch(dataAction.setTemp(8));
       dispatch(dataAction.setCurrent(78));
+      dispatch(dataAction.setTimeStamp());
     }
   }, [deviceConnected]);
 
@@ -109,6 +110,7 @@ const HeaderRow = () => {
         dispatch(dataAction.setVoltage(27));
         dispatch(dataAction.setTemp(8));
         dispatch(dataAction.setCurrent(78));
+        dispatch(dataAction.setTimeStamp());
       }, 4000);
 
       return () => {

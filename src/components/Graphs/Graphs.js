@@ -3,15 +3,15 @@ import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { dataAction } from "../../store";
 import CurrentLineChart from "../CurrentLineGraph/currentLineGraph";
+import ResizableContainer from "../ResizableContainer/ResizeableContainer";
 import TempLineChart from "../TemperatureLineGraph/TemperaturLineGraph";
 import VoltageLineChart from "../VoltageLineGraph/VoltageLineGraph";
 import "./Graphs.css";
-const TabWraper = styled.div``;
 
 const TabContainer = styled.div`
   border: 1px solid #ccc;
   margin: auto;
-  width: 80vw;
+  width: 100%;
 `;
 
 const Tab = styled.div`
@@ -22,26 +22,6 @@ const Tab = styled.div`
   cursor: pointer;
   background-color: #c9f7f5;
 `;
-const GreenTab = styled.div`
-  padding: 10px 20px;
-  margin: 5px;
-  width: fit-content;
-  text-align: center;
-  cursor: pointer;
-  background-color: #c9f7f5;
-  border-radius: 6px;
-  color: #1bc5bd;
-  cursor: pointer;
-  font-family: Poppins;
-  font-size: 12px;
-  justify-content: center;
-  align-items: center;
-  font-weight: 700;
-  &:hover {
-    color: #c9f7f5;
-    background-color: #1bc5bd;
-  }
-`;
 const RemoveButtonContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -49,7 +29,7 @@ const RemoveButtonContainer = styled.div`
   border: 1px 1px 1px 0px solid #ccc;
   margin: auto;
   padding: 10px;
-  width: 80vw;
+  width: 80%;
 `;
 const TabNavigation = styled.div`
   display: flex;
@@ -128,7 +108,7 @@ const VTIGraph = ({ graphId, componentKey, onRemove }) => {
     };
   }, []);
   return (
-    <TabWraper>
+    <ResizableContainer>
       <TabContainer className="tab-container">
         <RemoveButtonContainer>
           <GreenButton onClick={onRemove}> Remove</GreenButton>
@@ -193,7 +173,7 @@ const VTIGraph = ({ graphId, componentKey, onRemove }) => {
           )}
         </TabContent>
       </TabContainer>
-    </TabWraper>
+    </ResizableContainer>
   );
 };
 
