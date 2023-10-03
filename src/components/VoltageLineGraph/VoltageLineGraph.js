@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { dataAction } from "../../store";
@@ -10,42 +11,7 @@ const _ = require("lodash");
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 28px 24px;
-`;
-const BMsSelectButtoneader = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-`;
-
-const TabContainer = styled.div`
-  border: 1px solid #ccc;
-  margin: auto;
-  display: flex;
-  flex-direction: row;
-`;
-
-const GreenTab = styled.div`
-  margin: 5px;
-`;
-
-const GreenButton = styled.div`
-  margin-top: auto;
-  display: flex;
-  padding: 8px 16px;
-  background-color: #c9f7f5;
-  border-radius: 6px;
-  color: #1bc5bd;
-  cursor: pointer;
-  font-family: Poppins;
-  font-size: 12px;
-  justify-content: center;
-  align-items: center;
-  font-weight: 700;
-  &:hover {
-    color: #c9f7f5;
-    background-color: #1bc5bd;
-  }
+  padding: 0px auto;
 `;
 
 const MemoizedLineChart = React.memo(LineChart);
@@ -197,54 +163,38 @@ const VoltageLineChart = ({ graphId, graphTab, num_bms, selectedBmsIndex }) => {
     );
   }, [playPause]);
 
-  // useEffect(() => {
-  //   return () => {
-  //     dispatch(
-  //       dataAction.setGraphActiveBMSIndex({
-  //         id: graphId + "_" + graphTab,
-  //         bms: null,
-  //       })
-  //     );
-  //     dispatch(
-  //       dataAction.setGraphPlayPause({
-  //         id: graphId + "_" + graphTab,
-  //         btn: null,
-  //       })
-  //     );
-  //   };
-  // }, []);
-
-  // console.log("Active BMS: in ", graphId, currentBMS);
+  //full screen logic
+  const handle = useFullScreenHandle();
+  // console.log("handle ", handle);
   return (
     <Container>
-      <Container>
-        <TabContainer>
-          <GreenTab
-            onClick={togglePlayPause}
-            className={`${!playPause.btn ? "play-btn" : "pause-btn"}`}
-          >
-            {playPause.btn ? "Pause" : "Play"}
-          </GreenTab>
-        </TabContainer>
-        <TabContainer>
+      <div className={`menu-bar }`}>
+        <div
+          className={`${!playPause.btn ? "play-btn" : "pause-btn"}`}
+          onClick={togglePlayPause}
+        >
+          {playPause.btn ? "Pause" : "Play"}
+        </div>
+        <div className="tab" onClick={handle.enter}>
+          Go Fullscreen
+        </div>
+        <div className="tabs">
           {bms_buttons.map((button) => (
-            <GreenTab
+            <div
               key={button}
-              className={`${
-                button === activeBMS.bms
-                  ? "bms-button-active"
-                  : "bms-button-inactive"
+              className={` tab ${
+                button === activeBMS.bms ? "active" : "inactive"
               }`}
               onClick={() =>
                 setActiveBMS({ id: graphId + "_" + graphTab, bms: button })
               }
             >
               BMS{button}
-            </GreenTab>
+            </div>
           ))}
-        </TabContainer>
-      </Container>
-      <Container>
+        </div>
+      </div>
+      <FullScreen handle={handle}>
         <MemoizedLineChart
           data={
             ChartData.data[`bms_${activeBMS.bms}`]
@@ -260,7 +210,7 @@ const VoltageLineChart = ({ graphId, graphTab, num_bms, selectedBmsIndex }) => {
           }
           onLegendItemClick={toggleSeriesVisibility}
         />
-      </Container>
+      </FullScreen>
     </Container>
   );
 };

@@ -1,5 +1,6 @@
 .resizable-container {
   position: relative;
+  margin: auto;
   background-color: #f0f0f0;
   border: 10px solid #97f0d7;
   overflow: scroll; /* Hide overflowing content when resized */
@@ -8,5 +9,5 @@
 }
 
 .child-component {
-  padding: 10px;
+  padding: 0px 10px;
 }

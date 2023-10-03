@@ -37,7 +37,7 @@ function LineChart({ data }) {
           hour: "HH:mm",
         },
       },
-      tickAmount: 10, // Adjust this number to control the number of x-axis ticks
+      // tickAmount: 10, // Adjust this number to control the number of x-axis ticks
     },
     colors: [
       "#ff5733", // Red
@@ -61,12 +61,7 @@ function LineChart({ data }) {
 
   return (
     <div>
-      <ReactApexChart
-        options={chartOptions}
-        series={chartData}
-        type="line"
-        height={350}
-      />
+      <ReactApexChart options={chartOptions} series={chartData} type="line" />
     </div>
   );
 }

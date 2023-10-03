@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { dataAction } from "../../store";
 import CurrentLineChart from "../CurrentLineGraph/currentLineGraph";
+import GraphMenuBar from "../GraphMenubar/GraphMenubar";
 import ResizableContainer from "../ResizableContainer/ResizeableContainer";
 import TempLineChart from "../TemperatureLineGraph/TemperaturLineGraph";
 import VoltageLineChart from "../VoltageLineGraph/VoltageLineGraph";
@@ -72,33 +73,31 @@ const VTIGraph = ({ graphId, componentKey, onRemove }) => {
       tabNumber: 1,
     }
   );
-  const num_bms = useSelector((state) => state.bms);
-  const handleTabClick = (tabNumber) => {
-    setActiveTab({ id: graphId, tabNumber: tabNumber });
-  };
-
   useEffect(() => {
-    dispatch(
-      dataAction.setGraphActiveTab({
+    setActiveTab(
+      graphActiveTab.filter((active) => active.id === graphId)[0] || {
         id: graphId,
-        tabNumber: activeTab.tabNumber,
-      })
+        tabNumber: 1,
+      }
     );
-  }, [activeTab]);
-
+  }, [graphActiveTab]);
+  const num_bms = useSelector((state) => state.bms);
+  const graphWidth = "100%";
+  const graphHeight = "80vh";
   const activeStyle = {
     color: "#fff",
   };
+  console.log();
   // // console.log("GraphId", graphId);
   // console.log("ActiveTab in graph", graphId, graphActiveTab);
   useEffect(() => {
     return () => {
-      dispatch(
-        dataAction.setGraphActiveTab({
-          id: graphId,
-          tabNumber: null,
-        })
-      );
+      // dispatch(
+      //   dataAction.setGraphActiveTab({
+      //     id: graphId,
+      //     tabNumber: null,
+      //   })
+      // );
       dispatch(
         dataAction.setGraphActiveBMSIndex({
           id: graphId + "_" + activeTab.tabNumber,
@@ -107,72 +106,46 @@ const VTIGraph = ({ graphId, componentKey, onRemove }) => {
       );
     };
   }, []);
+  const removeBtn = <GreenButton onClick={onRemove}> Remove</GreenButton>;
   return (
-    <ResizableContainer>
-      <TabContainer className="tab-container">
-        <RemoveButtonContainer>
-          <GreenButton onClick={onRemove}> Remove</GreenButton>
-        </RemoveButtonContainer>
-        <TabNavigation>
-          <Tab
-            className={`tab ${
-              activeTab.tabNumber === 1 ? "active" : "inactive"
-            }`}
-            onClick={() => handleTabClick(1)}
-          >
-            Voltage
-          </Tab>
-          <Tab
-            className={`tab ${
-              activeTab.tabNumber === 2 ? "active" : "inactive"
-            }`}
-            onClick={() => handleTabClick(2)}
-          >
-            Temperature
-          </Tab>
-          <Tab
-            className={`tab ${
-              activeTab.tabNumber === 3 ? "active" : "inactive"
-            }`}
-            onClick={() => handleTabClick(3)}
-          >
-            Current
-          </Tab>
-        </TabNavigation>
-
-        <TabContent className="tab-content">
-          {activeTab.tabNumber === 1 && (
-            <div>
-              <VoltageLineChart
-                graphId={graphId}
-                num_bms={num_bms}
-                graphTab={activeTab.tabNumber}
-                selectedBmsIndex={0}
-              />
-            </div>
-          )}
-          {activeTab.tabNumber === 2 && (
-            <div>
-              <TempLineChart
-                graphId={graphId}
-                num_bms={num_bms}
-                graphTab={activeTab.tabNumber}
-                selectedBmsIndex={0}
-              />
-            </div>
-          )}
-          {activeTab.tabNumber === 3 && (
-            <div>
-              <CurrentLineChart
-                graphId={graphId}
-                num_bms={num_bms}
-                graphTab={activeTab.tabNumber}
-                selectedBmsIndex={0}
-              />
-            </div>
-          )}
-        </TabContent>
-      </TabContainer>
+    <ResizableContainer height={graphHeight} width={graphWidth}>
+      <div>
+        <GraphMenuBar removeBtn={removeBtn} graphId={graphId} />
+        <TabContainer className="tab-container">
+          <TabContent className="tab-content">
+            {activeTab.tabNumber === 1 && (
+              <div>
+                <VoltageLineChart
+                  graphId={graphId}
+                  num_bms={num_bms}
+                  graphTab={activeTab.tabNumber}
+                  selectedBmsIndex={0}
+                />
+              </div>
+            )}
+            {activeTab.tabNumber === 2 && (
+              <div>
+                <TempLineChart
+                  graphId={graphId}
+                  num_bms={num_bms}
+                  graphTab={activeTab.tabNumber}
+                  selectedBmsIndex={0}
+                />
+              </div>
+            )}
+            {activeTab.tabNumber === 3 && (
+              <div>
+                <CurrentLineChart
+                  graphId={graphId}
+                  num_bms={num_bms}
+                  graphTab={activeTab.tabNumber}
+                  selectedBmsIndex={0}
+                />
+              </div>
+            )}
+          </TabContent>
+        </TabContainer>
+      </div>
     </ResizableContainer>
   );
 };
