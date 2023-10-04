@@ -1,0 +1,41 @@
+.legend-item {
+  padding: 10px 10px;
+  margin: 5px;
+  width: fit-content;
+  text-align: center;
+  cursor: pointer;
+  background-color: #c9f7f5;
+  border-radius: 50%;
+  color: #1bc5bd;
+  cursor: pointer;
+  font-family: Poppins;
+  font-size: 10px;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  &:hover {
+    color: #c9f7f5;
+    background-color: #1bc5bd;
+  }
+}
+
+.legend-inactive {
+  padding: 10px 10px;
+  margin: 5px;
+  width: fit-content;
+  text-align: center;
+  cursor: pointer;
+  background-color: #88848c;
+  border-radius: 50%;
+  color: #1bc5bd;
+  cursor: pointer;
+  font-family: Poppins;
+  font-size: 10px;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  &:hover {
+    color: #c9f7f5;
+    background-color: #1bc5bd;
+  }
+}

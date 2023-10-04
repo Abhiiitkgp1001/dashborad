@@ -34,7 +34,7 @@ const FeatureContainer = styled.div`
     min-width: 32px;
     align-items: center;
     justify-content: center;
-    border-radius : 8px;
+    border-radius : 40px;
     cursor: pointer;
     font-family: Poppins;
     font-weight: 600;
