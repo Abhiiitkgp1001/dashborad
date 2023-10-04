@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
 import { useSelector } from "react-redux";
+import LineChart from "../LineChart";
 
 import styled from "styled-components";
 

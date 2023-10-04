@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FullScreen, useFullScreenHandle } from "react-full-screen";
+// import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { dataAction } from "../../store";
@@ -164,7 +164,7 @@ const VoltageLineChart = ({ graphId, graphTab, num_bms, selectedBmsIndex }) => {
   }, [playPause]);
 
   //full screen logic
-  const handle = useFullScreenHandle();
+  // const handle = useFullScreenHandle();
   // console.log("handle ", handle);
   return (
     <Container>
@@ -175,9 +175,9 @@ const VoltageLineChart = ({ graphId, graphTab, num_bms, selectedBmsIndex }) => {
         >
           {playPause.btn ? "Pause" : "Play"}
         </div>
-        <div className="tab" onClick={handle.enter}>
+        {/* <div className="tab" onClick={handle.enter}>
           Go Fullscreen
-        </div>
+        </div> */}
         <div className="tabs">
           {bms_buttons.map((button) => (
             <div
@@ -194,7 +194,7 @@ const VoltageLineChart = ({ graphId, graphTab, num_bms, selectedBmsIndex }) => {
           ))}
         </div>
       </div>
-      <FullScreen handle={handle}>
+      {/* <FullScreen handle={handle}> */}
         <MemoizedLineChart
           data={
             ChartData.data[`bms_${activeBMS.bms}`]
@@ -210,7 +210,7 @@ const VoltageLineChart = ({ graphId, graphTab, num_bms, selectedBmsIndex }) => {
           }
           onLegendItemClick={toggleSeriesVisibility}
         />
-      </FullScreen>
+      {/* </FullScreen> */}
     </Container>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FullScreen, useFullScreenHandle } from "react-full-screen";
+// import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { dataAction } from "../../store";
@@ -190,9 +190,7 @@ const TemperatureLineChart = ({
   // console.log("Active playPause: in ", playPause.btn);
   // console.log("chart data", ChartData);
 
-  //full screen logic
-  const handle = useFullScreenHandle();
-  // console.log("handle ", handle);
+
 
   return (
     <Container>
@@ -203,9 +201,7 @@ const TemperatureLineChart = ({
         >
           {playPause.btn ? "Pause" : "Play"}
         </div>
-        <div className="tab" onClick={handle.enter}>
-          Go Fullscreen
-        </div>
+
         <div className="tabs">
           {bms_buttons.map((button) => (
             <div
@@ -222,8 +218,8 @@ const TemperatureLineChart = ({
           ))}
         </div>
       </div>
-      <FullScreen handle={handle}>
-        <div>
+      {/* <FullScreen handle={handle}> */}
+        {/* <div> */}
           <MemoizedLineChart
             data={
               ChartData.data[`bms_${activeBMS.bms}`]
@@ -239,8 +235,8 @@ const TemperatureLineChart = ({
             }
             onLegendItemClick={toggleSeriesVisibility}
           />
-        </div>
-      </FullScreen>
+        {/* </div> */}
+      {/* </FullScreen> */}
     </Container>
   );
 };

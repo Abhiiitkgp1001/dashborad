@@ -22,8 +22,9 @@ function ResizableContainer({ children, width, height }) {
       minWidth="48vw"
       minHeight="50vh"
       maxWidth="99vw"
+      maxHeight="99vh"
     >
-      <div className="child-component">{children }</div>
+      <div className="child-component">{children}</div>
     </Resizable>
   );
 }
