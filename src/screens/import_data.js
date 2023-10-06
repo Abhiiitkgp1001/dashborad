@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import Heading from '../components/heading';
-import Papa from "papaparse";
-import { read, utils, writeFile } from 'xlsx';
+// import Papa from "papaparse";
+import { read, utils} from 'xlsx';
 import AreaChart from '../components/AreaChart';
 import { mean, median, standardDeviation } from '../helpers/utils';
 import SmallOne from '../components/smallOne';
@@ -12,7 +12,7 @@ const min = 0;
 const Container = styled.div`
     display: flex;
     flex-direction: column;
-    padding : 28px 24px;    
+    padding : 28px 24px;
 `;
 const GreenButton = styled.div`
 margin-top: auto;
@@ -74,7 +74,7 @@ const FileInput = styled.input`
     background-color: #282733;
     opacity: 0.85;
   }
-  
+
   &::file-selector-button:active {
     background-color: #282733;
   }
@@ -124,7 +124,7 @@ const ImportData = () => {
     const [data_mean, setDataMean] = useState([]);
     const [data_median, setDataMedian] = useState([]);
     const [data_std, setDataStd] = useState([]);
-    
+
     const handleImport = ($event) => {
         const files = $event.target.files;
         if (files.length) {
@@ -144,13 +144,13 @@ const ImportData = () => {
                         data[`BMS ${i}`] =rows;
                         graphs[`BMS ${i}`] =[];
                     }
-                    
+
                     for(let key in data){
                         let filtered_data ={};
                         for(let i=0;i<data[key].length;i++){
                             let obj = data[key][i];
                             for (let j in obj) {
-                                filtered_data[j] = filtered_data[j]||[]; 
+                                filtered_data[j] = filtered_data[j]||[];
                                 filtered_data[j].push(obj[j]);
                             }
                         }
@@ -204,7 +204,7 @@ const ImportData = () => {
                     setDataMean(overall_data_means);
                     setDataMedian(overall_data_medians);
                     setDataStd(overall_data_stds);
-                    
+
                 }
             }
             reader.readAsArrayBuffer(file);
@@ -253,10 +253,10 @@ const ImportData = () => {
                         backgroundColor: bms_active == index ?'#7A9D54' : '#A1CCD1',
                         color:bms_active == index ?'white':'black',
                         boxShadow: bms_active == index ? 'none' : '0px 0px 20px rgba(94, 98, 120, 0.04)',
-                    }} 
+                    }}
                     onClick={()=>setBMSActive(index)}
                     >{item}</FeatureContainer>
-                    
+
                 })
                 }
             </RowContainer>

@@ -10,6 +10,7 @@ import ResizableContainer from "../ResizableContainer/ResizeableContainer";
 import TempLineChart from "../TemperatureLineGraph/TemperaturLineGraph";
 import VoltageLineChart from "../VoltageLineGraph/VoltageLineGraph";
 import "./Graphs.css";
+const _ = require("lodash");
 
 const TabContainer = styled.div`
   border: 1px solid #ccc;
@@ -67,7 +68,20 @@ const GreenButton = styled.div`
 `;
 
 const VTIGraph = ({ graphId, componentKey, onRemove }) => {
-  const graphActiveTab = useSelector((state) => state.graphActiveTab);
+  const time = useSelector((state) => state.timestamp); //timestamp
+  const voltage = useSelector((state) => state.voltage); //voltage
+  const current = useSelector((state) => state.current); //current
+  const temp = useSelector((state) => state.temp); // temperature
+  const chart = useSelector((state) => state.chartData); // chart data
+  const currentPlayOrPause = useSelector((state) => state.graphPlayPause); //playpause button
+
+  const graphActiveTab = useSelector((state) => state.graphActiveTab); // active graph tab
+  const [playPause, setPlayPause] = useState(
+    currentPlayOrPause.filter((playbtn) => playbtn.id === graphId)[0] || {
+      id: graphId,
+      btn: true,
+    }
+  );
   const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState(
     graphActiveTab.filter((active) => active.id === graphId)[0] || {
@@ -75,6 +89,18 @@ const VTIGraph = ({ graphId, componentKey, onRemove }) => {
       tabNumber: 1,
     }
   );
+
+  const [ChartData, setChartData] = useState(
+    chart.filter((chart) => chart.id === graphId)[0] || {
+      id: graphId,
+      data: {
+        voltageData: {},
+        tempData: {},
+        currentData: {},
+      },
+    }
+  );
+
   useEffect(() => {
     setActiveTab(
       graphActiveTab.filter((active) => active.id === graphId)[0] || {
@@ -86,10 +112,138 @@ const VTIGraph = ({ graphId, componentKey, onRemove }) => {
   const num_bms = useSelector((state) => state.bms);
   const graphWidth = "100%";
   const graphHeight = "100%";
-  const activeStyle = {
-    color: "#fff",
+
+  //for updating chart data
+  useEffect(() => {
+    setChartData((prevData) => {
+      const updatedData = _.cloneDeep(prevData.data);
+      if (playPause.btn) {
+        if (num_bms > 0) {
+          for (let j = 0; j < num_bms; j++) {
+            updatedData.voltageData["bms_" + j] = [];
+            updatedData.tempData["bms_" + j] = [];
+            updatedData.currentData["bms_" + j] = [];
+            if (Object.keys(voltage).length !== 0) {
+              for (let i = 0; i < voltage["bms " + j].length; i++) {
+                //set current data as its index contains only single values
+                if (updatedData.currentData["bms_" + j].length > 0) {
+                  updatedData.currentData["bms_" + j][0].data.push({
+                    x: time[i],
+                    y: current[i],
+                  });
+                } else {
+                  updatedData.currentData["bms_" + j].push({
+                    name: "C",
+                    data: [],
+                    visible: prevData.data.currentData["bms_" + j]
+                      ? prevData.data.currentData["bms_" + j][0].visible
+                      : true,
+                  });
+                }
+
+                for (let k = 0; k < voltage["bms " + j][0].length; k++) {
+                  //length of all volatges coming in series will be same as number are voltages are fixed
+                  if (voltage["bms " + j][i][k] !== undefined) {
+                    if (k < updatedData.voltageData["bms_" + j].length) {
+                      updatedData.voltageData["bms_" + j][k].data.push({
+                        x: time[i],
+                        y: voltage["bms " + j][i][k],
+                      });
+                    } else {
+                      updatedData.voltageData["bms_" + j].push({
+                        name: "V_" + (k + 1),
+                        data: [],
+                        visible: prevData.data.voltageData["bms_" + j]
+                          ? prevData.data.voltageData["bms_" + j][k].visible
+                          : true,
+                      });
+                      updatedData.voltageData["bms_" + j][k].data.push({
+                        x: time[i],
+                        y: voltage["bms " + j][i][k],
+                      });
+                    }
+                  } else {
+                    break;
+                  }
+                }
+                for (let k = 0; k < temp["bms " + j][0].length; k++) {
+                  //length of all volatges coming in series will be same as number are voltages are fixed
+                  if (temp["bms " + j][i][k] !== undefined) {
+                    if (k < updatedData.tempData["bms_" + j].length) {
+                      updatedData.tempData["bms_" + j][k].data.push({
+                        x: time[i],
+                        y: temp["bms " + j][i][k],
+                      });
+                    } else {
+                      updatedData.tempData["bms_" + j].push({
+                        name: "T_" + (k + 1),
+                        data: [],
+                        visible: prevData.data.tempData["bms_" + j]
+                          ? prevData.data.tempData["bms_" + j][k].visible
+                          : true,
+                      });
+                      updatedData.tempData["bms_" + j][k].data.push({
+                        x: time[i],
+                        y: temp["bms " + j][i][k],
+                      });
+                    }
+                  } else {
+                    break;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      return { id: graphId, data: updatedData };
+    });
+  }, [voltage, temp, current, time]);
+
+  useEffect(() => {
+    dispatch(dataAction.setChartData(ChartData));
+  }, [ChartData]);
+
+  const toggleSeriesVisibility = (seriesIndex, activeBMS, graphType) => {
+    setChartData((prevData) => {
+      const updatedData = _.cloneDeep(prevData);
+      if (graphType === 1) {
+        updatedData.data.voltageData[`bms_${activeBMS.bms}`][
+          seriesIndex
+        ].visible =
+          !updatedData.data.voltageData[`bms_${activeBMS.bms}`][seriesIndex]
+            .visible;
+      }
+      if (graphType === 2) {
+        updatedData.data.tempData[`bms_${activeBMS.bms}`][seriesIndex].visible =
+          !updatedData.data.tempData[`bms_${activeBMS.bms}`][seriesIndex]
+            .visible;
+      }
+      if (graphType === 3) {
+        updatedData.data.currentData[`bms_${activeBMS.bms}`][
+          seriesIndex
+        ].visible =
+          !updatedData.data.currentData[`bms_${activeBMS.bms}`][seriesIndex]
+            .visible;
+      }
+      return updatedData;
+    });
   };
-  console.log();
+
+  // console.log(ChartData.data.currentData);
+  // console.log(ChartData.data.voltageData);
+  // console.log(ChartData.data.tempData);
+
+  //for chnage in playpause btn set data in store if rerender happens it takes that into account
+  useEffect(() => {
+    dispatch(
+      dataAction.setGraphPlayPause({
+        id: graphId,
+        btn: playPause.btn,
+      })
+    );
+  }, [playPause]);
   // // console.log("GraphId", graphId);
   // console.log("ActiveTab in graph", graphId, graphActiveTab);
   useEffect(() => {
@@ -108,6 +262,12 @@ const VTIGraph = ({ graphId, componentKey, onRemove }) => {
       );
     };
   }, []);
+  const togglePlayPause = () => {
+    setPlayPause({
+      id: graphId,
+      btn: !playPause.btn,
+    });
+  };
   const removeBtn = <GreenButton onClick={onRemove}> Remove</GreenButton>;
   //full screen logic
   const handle = useFullScreenHandle();
@@ -127,30 +287,42 @@ const VTIGraph = ({ graphId, componentKey, onRemove }) => {
               {activeTab.tabNumber === 1 && (
                 <div>
                   <VoltageLineChart
+                    chartData={ChartData.data.voltageData}
                     graphId={graphId}
                     num_bms={num_bms}
                     graphTab={activeTab.tabNumber}
                     selectedBmsIndex={0}
+                    playPause={playPause}
+                    togglePlayPause={togglePlayPause}
+                    toggleSeriesVisibility={toggleSeriesVisibility}
                   />
                 </div>
               )}
               {activeTab.tabNumber === 2 && (
                 <div>
                   <TempLineChart
+                    chartData={ChartData.data.tempData}
                     graphId={graphId}
                     num_bms={num_bms}
                     graphTab={activeTab.tabNumber}
                     selectedBmsIndex={0}
+                    playPause={playPause}
+                    togglePlayPause={togglePlayPause}
+                    toggleSeriesVisibility={toggleSeriesVisibility}
                   />
                 </div>
               )}
               {activeTab.tabNumber === 3 && (
                 <div>
                   <CurrentLineChart
+                    chartData={ChartData.data.currentData}
                     graphId={graphId}
                     num_bms={num_bms}
                     graphTab={activeTab.tabNumber}
                     selectedBmsIndex={0}
+                    playPause={playPause}
+                    togglePlayPause={togglePlayPause}
+                    toggleSeriesVisibility={toggleSeriesVisibility}
                   />
                 </div>
               )}
