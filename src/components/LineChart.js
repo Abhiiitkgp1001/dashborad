@@ -61,7 +61,12 @@ function LineChart({ data }) {
 
   return (
     <div>
-      <ReactApexChart options={chartOptions} series={chartData} type="line" />
+      <ReactApexChart
+        options={chartOptions}
+        series={chartData}
+        type="line"
+        height={300}
+      />
     </div>
   );
 }

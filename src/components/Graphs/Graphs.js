@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import { useDispatch, useSelector } from "react-redux";
+
 import styled from "styled-components";
 import { dataAction } from "../../store";
 import CurrentLineChart from "../CurrentLineGraph/currentLineGraph";
@@ -83,7 +85,7 @@ const VTIGraph = ({ graphId, componentKey, onRemove }) => {
   }, [graphActiveTab]);
   const num_bms = useSelector((state) => state.bms);
   const graphWidth = "100%";
-  const graphHeight = "80vh";
+  const graphHeight = "100%";
   const activeStyle = {
     color: "#fff",
   };
@@ -107,46 +109,56 @@ const VTIGraph = ({ graphId, componentKey, onRemove }) => {
     };
   }, []);
   const removeBtn = <GreenButton onClick={onRemove}> Remove</GreenButton>;
+  //full screen logic
+  const handle = useFullScreenHandle();
+  // console.log("handle ", handle);
   return (
-    <ResizableContainer height={graphHeight} width={graphWidth}>
-      <div>
-        <GraphMenuBar removeBtn={removeBtn} graphId={graphId} />
-        <TabContainer className="tab-container">
-          <TabContent className="tab-content">
-            {activeTab.tabNumber === 1 && (
-              <div>
-                <VoltageLineChart
-                  graphId={graphId}
-                  num_bms={num_bms}
-                  graphTab={activeTab.tabNumber}
-                  selectedBmsIndex={0}
-                />
-              </div>
-            )}
-            {activeTab.tabNumber === 2 && (
-              <div>
-                <TempLineChart
-                  graphId={graphId}
-                  num_bms={num_bms}
-                  graphTab={activeTab.tabNumber}
-                  selectedBmsIndex={0}
-                />
-              </div>
-            )}
-            {activeTab.tabNumber === 3 && (
-              <div>
-                <CurrentLineChart
-                  graphId={graphId}
-                  num_bms={num_bms}
-                  graphTab={activeTab.tabNumber}
-                  selectedBmsIndex={0}
-                />
-              </div>
-            )}
-          </TabContent>
-        </TabContainer>
-      </div>
-    </ResizableContainer>
+    <FullScreen handle={handle}>
+      <ResizableContainer height={graphHeight} width={graphWidth}>
+        <div>
+          <GraphMenuBar
+            removeBtn={removeBtn}
+            graphId={graphId}
+            handle={handle}
+          />
+
+          <TabContainer className="tab-container">
+            <TabContent className="tab-content">
+              {activeTab.tabNumber === 1 && (
+                <div>
+                  <VoltageLineChart
+                    graphId={graphId}
+                    num_bms={num_bms}
+                    graphTab={activeTab.tabNumber}
+                    selectedBmsIndex={0}
+                  />
+                </div>
+              )}
+              {activeTab.tabNumber === 2 && (
+                <div>
+                  <TempLineChart
+                    graphId={graphId}
+                    num_bms={num_bms}
+                    graphTab={activeTab.tabNumber}
+                    selectedBmsIndex={0}
+                  />
+                </div>
+              )}
+              {activeTab.tabNumber === 3 && (
+                <div>
+                  <CurrentLineChart
+                    graphId={graphId}
+                    num_bms={num_bms}
+                    graphTab={activeTab.tabNumber}
+                    selectedBmsIndex={0}
+                  />
+                </div>
+              )}
+            </TabContent>
+          </TabContainer>
+        </div>
+      </ResizableContainer>
+    </FullScreen>
   );
 };
 

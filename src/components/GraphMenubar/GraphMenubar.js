@@ -4,7 +4,7 @@ import { dataAction } from "../../store";
 
 import "./GraphMenubar.css"; // Import your CSS file
 
-const GraphMenuBar = ({ removeBtn, graphId }) => {
+const GraphMenuBar = ({ removeBtn, graphId, handle }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const graphActiveTab = useSelector((state) => state.graphActiveTab);
   const dispatch = useDispatch();
@@ -40,6 +40,9 @@ const GraphMenuBar = ({ removeBtn, graphId }) => {
     <div className={`menu-bar ${menuOpen ? "open" : ""}`}>
       <div className="menu-button" onClick={toggleMenu}>
         {removeBtn}
+      </div>
+      <div className="tab" onClick={handle.active ? handle.exit : handle.enter}>
+        {handle.active ? "Exit FullScreen" : "Go Fullscreen"}
       </div>
       <div className="tabs">
         <div
