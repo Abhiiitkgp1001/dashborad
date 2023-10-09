@@ -8,14 +8,14 @@ const LegendContainer = styled.div`
   flex-wrap: wrap;
   justify-content: start;
 `;
-function ChartLegend({ data, onLegendItemClick }) {
+function ChartLegend({ data, onLegendItemClick, graphType, activeBMS }) {
   return (
     <LegendContainer>
       {data.map((series, index) => (
         <div
           key={index}
           className={`legend-item  ${!series.visible ? "legend-inactive" : ""}`}
-          onClick={() => onLegendItemClick(index)}
+          onClick={() => onLegendItemClick(index, activeBMS, graphType)}
         >
           <span className={`legend-marker color-${index}`} />
           <span className="legend-text">{series.name}</span>

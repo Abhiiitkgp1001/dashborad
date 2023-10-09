@@ -6,6 +6,7 @@ import VITGraph from "../../components/Graphs/Graphs";
 import { dataAction } from "../../store";
 import Customers from "../Boards";
 import VpBoard from "../headerRow";
+import "./dashboard.scss";
 
 const AddGraphContainer = styled.div`
   display: flex;

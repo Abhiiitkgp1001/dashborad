@@ -19,8 +19,10 @@ function ResizableContainer({ children, width, height }) {
       // height={containerHeight}
       onResizeStop={onResize}
       className="resizable-container"
-      minWidth="50%"
+      minWidth="48vw"
       minHeight="50vh"
+      maxWidth="99vw"
+      maxHeight="99vh"
     >
       <div className="child-component">{children}</div>
     </Resizable>

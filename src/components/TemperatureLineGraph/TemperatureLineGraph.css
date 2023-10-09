@@ -1,46 +1,36 @@
-.bms-button-active {
-  padding: 10px 10px;
-  margin: 5px;
-  width: fit-content;
-  text-align: center;
+.tabs {
+  display: flex;
+  gap: 10px;
+}
+.tab {
   cursor: pointer;
-  background-color: #b7efec;
-  color: #385d5d;
-  cursor: pointer;
-  font-family: Poppins;
-  font-size: 15px;
-  justify-content: center;
-  align-items: center;
-  font-weight: 700;
+  padding: 5px 10px;
+  border: 1px solid #fff;
+  border-radius: 5px;
   &:hover {
     color: #c9f7f5;
     background-color: #1bc5bd;
   }
 }
 
-.bms-button-inactive {
-  padding: 10px 10px;
-  margin: 5px;
-  width: fit-content;
-  text-align: center;
-  cursor: pointer;
-  background-color: #dcedec;
-  color: #71a398;
-  cursor: pointer;
-  font-family: Poppins;
-  font-size: 15px;
-  justify-content: center;
-  align-items: center;
-  font-weight: 700;
+.active {
+  background-color: #d3f2eb;
+  color: #075140;
   &:hover {
     color: #c9f7f5;
     background-color: #1bc5bd;
   }
 }
 
-.play-btn{
-  padding: 10px 10px;
-  margin: 5px;
+.inactive {
+  &:hover {
+    color: #c9f7f5;
+    background-color: #1bc5bd;
+  }
+}
+
+.play-btn {
+  padding: 5px 10px;
   width: fit-content;
   text-align: center;
   cursor: pointer;
@@ -48,7 +38,7 @@
   color: #e3edeb;
   cursor: pointer;
   font-family: Poppins;
-  font-size: 15px;
+  font-size: 10px;
   justify-content: center;
   align-items: center;
   font-weight: 700;
@@ -58,10 +48,8 @@
   }
 }
 
-
-.pause-btn{
-  padding: 10px 10px;
-  margin: 5px;
+.pause-btn {
+  padding: 5px 10px;
   width: fit-content;
   text-align: center;
   cursor: pointer;
@@ -69,7 +57,7 @@
   color: #e9f5f4;
   cursor: pointer;
   font-family: Poppins;
-  font-size: 15px;
+  font-size: 10px;
   justify-content: center;
   align-items: center;
   font-weight: 700;
@@ -79,4 +67,14 @@
   }
 }
 
+@media (max-width: 768px) {
+  .menu-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 20px;
+  }
 
+  .tabs {
+    flex-direction: column;
+  }
+}
