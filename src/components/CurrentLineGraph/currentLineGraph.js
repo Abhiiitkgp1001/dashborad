@@ -62,7 +62,7 @@ const GreenButton = styled.div`
   }
 `;
 
-const CurrentLineChart = ({ selectedBmsIndex }) => {
+const CurrentLineChart = ({ selectedBmsIndex, isInFullScreen }) => {
   const time = useSelector((state) => state.timestamp);
   const current = useSelector((state) => state.current);
   const colors = [
@@ -148,6 +148,7 @@ const CurrentLineChart = ({ selectedBmsIndex }) => {
         series={g_data.series}
         type="line"
         width={"100%"}
+        height={isInFullScreen ? 600: 350}
       />
     </Container>
   );

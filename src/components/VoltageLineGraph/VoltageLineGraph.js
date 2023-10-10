@@ -6,6 +6,9 @@ import { dataAction } from "../../store";
 import ChartLegend from "../ChartLegends/ChartLegend";
 import LineChart from "../LineChart";
 import "./VoltageLineGraph.css";
+import "../VoltageRadialChart.js";
+import { FaCirclePause, FaCirclePlay } from "react-icons/fa6";
+import VoltageRadialChart from "../VoltageRadialChart.js";
 const _ = require("lodash");
 
 const Container = styled.div`
@@ -17,7 +20,13 @@ const Container = styled.div`
 const MemoizedLineChart = React.memo(LineChart);
 const MemoizedChartLegend = React.memo(ChartLegend);
 
-const VoltageLineChart = ({ graphId, graphTab, num_bms, selectedBmsIndex }) => {
+const VoltageLineChart = ({
+  graphId,
+  graphTab,
+  num_bms,
+  selectedBmsIndex,
+  isInFullScreen,
+}) => {
   const time = useSelector((state) => state.timestamp);
   const currentPlayOrPause = useSelector((state) => state.graphPlayPause);
   const currentBMS = useSelector((state) => state.graphActiveBMSIndex);
@@ -32,7 +41,7 @@ const VoltageLineChart = ({ graphId, graphTab, num_bms, selectedBmsIndex }) => {
       bms: selectedBmsIndex,
     }
   );
-
+  console.log("active bms: ", activeBMS);
   const [ChartData, setChartData] = useState(
     voltageChartData.filter((chart) => chart.id === graphId)[0] || {
       id: graphId,
@@ -173,7 +182,17 @@ const VoltageLineChart = ({ graphId, graphTab, num_bms, selectedBmsIndex }) => {
           className={`${!playPause.btn ? "play-btn" : "pause-btn"}`}
           onClick={togglePlayPause}
         >
-          {playPause.btn ? "Pause" : "Play"}
+          {playPause.btn ? (
+            <>
+              <FaCirclePause />
+              {" Pause"}
+            </>
+          ) : (
+            <>
+              <FaCirclePlay />
+              {" Play"}
+            </>
+          )}
         </div>
         {/* <div className="tab" onClick={handle.enter}>
           Go Fullscreen
@@ -195,12 +214,14 @@ const VoltageLineChart = ({ graphId, graphTab, num_bms, selectedBmsIndex }) => {
         </div>
       </div>
       {/* <FullScreen handle={handle}> */}
+      <div>
         <MemoizedLineChart
           data={
             ChartData.data[`bms_${activeBMS.bms}`]
               ? ChartData.data[`bms_${activeBMS.bms}`]
               : []
           }
+          isInFullScreen = {isInFullScreen}
         />
         <MemoizedChartLegend
           data={
@@ -210,6 +231,7 @@ const VoltageLineChart = ({ graphId, graphTab, num_bms, selectedBmsIndex }) => {
           }
           onLegendItemClick={toggleSeriesVisibility}
         />
+      </div>
       {/* </FullScreen> */}
     </Container>
   );

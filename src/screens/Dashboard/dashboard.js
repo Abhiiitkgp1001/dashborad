@@ -7,6 +7,7 @@ import { dataAction } from "../../store";
 import Customers from "../Boards";
 import VpBoard from "../headerRow";
 import "./dashboard.scss";
+import { BsFillGridFill, BsFillPlusCircleFill, BsList } from "react-icons/bs";
 
 const AddGraphContainer = styled.div`
   display: flex;
@@ -104,12 +105,13 @@ const Dashboard = () => {
         <Customers />
         <div>
           <AddGraphContainer>
-            <GreenButton onClick={addComponent}> Add New Graph</GreenButton>
+            <GreenButton onClick={addComponent}> <BsFillPlusCircleFill /> &nbsp; Add New Graph</GreenButton>
             <GreenButton onClick={() => setListView(true)}>
-              List View
+              <BsList />
+              &nbsp; List View
             </GreenButton>
             <GreenButton onClick={() => setListView(false)}>
-              Grid View
+              <BsFillGridFill /> &nbsp; Grid View
             </GreenButton>
           </AddGraphContainer>
 

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { dataAction } from "../../store";
+import { FaCirclePause, FaCirclePlay } from "react-icons/fa6";
 import ChartLegend from "../ChartLegends/ChartLegend";
 import LineChart from "../LineChart";
 import "./TemperatureLineGraph.css";
@@ -22,6 +23,7 @@ const TemperatureLineChart = ({
   graphTab,
   num_bms,
   selectedBmsIndex,
+  isInFullScreen
 }) => {
   const time = useSelector((state) => state.timestamp);
   const currentBMS = useSelector((state) => state.graphActiveBMSIndex);
@@ -199,7 +201,17 @@ const TemperatureLineChart = ({
           className={`${!playPause.btn ? "play-btn" : "pause-btn"}`}
           onClick={togglePlayPause}
         >
-          {playPause.btn ? "Pause" : "Play"}
+          {playPause.btn ? (
+            <>
+              <FaCirclePause />
+              {" Pause"}
+            </>
+          ) : (
+            <>
+              <FaCirclePlay />
+              {" Play"}
+            </>
+          )}
         </div>
 
         <div className="tabs">
@@ -219,23 +231,24 @@ const TemperatureLineChart = ({
         </div>
       </div>
       {/* <FullScreen handle={handle}> */}
-        {/* <div> */}
-          <MemoizedLineChart
-            data={
-              ChartData.data[`bms_${activeBMS.bms}`]
-                ? ChartData.data[`bms_${activeBMS.bms}`]
-                : []
-            }
-          />
-          <MemoizedChartLegend
-            data={
-              ChartData.data[`bms_${activeBMS.bms}`]
-                ? ChartData.data[`bms_${activeBMS.bms}`]
-                : []
-            }
-            onLegendItemClick={toggleSeriesVisibility}
-          />
-        {/* </div> */}
+      {/* <div> */}
+      <MemoizedLineChart
+        data={
+          ChartData.data[`bms_${activeBMS.bms}`]
+            ? ChartData.data[`bms_${activeBMS.bms}`]
+            : []
+        }
+        isInFullScreen={isInFullScreen}
+      />
+      <MemoizedChartLegend
+        data={
+          ChartData.data[`bms_${activeBMS.bms}`]
+            ? ChartData.data[`bms_${activeBMS.bms}`]
+            : []
+        }
+        onLegendItemClick={toggleSeriesVisibility}
+      />
+      {/* </div> */}
       {/* </FullScreen> */}
     </Container>
   );

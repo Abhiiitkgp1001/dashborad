@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import { useDispatch, useSelector } from "react-redux";
-
+import { FaXmark } from "react-icons/fa6";
 import styled from "styled-components";
 import { dataAction } from "../../store";
 import CurrentLineChart from "../CurrentLineGraph/currentLineGraph";
@@ -108,10 +108,17 @@ const VTIGraph = ({ graphId, componentKey, onRemove }) => {
       );
     };
   }, []);
-  const removeBtn = <GreenButton onClick={onRemove}> Remove</GreenButton>;
+  const removeBtn = (
+    <>
+      <GreenButton onClick={onRemove}>
+        <FaXmark />
+         Remove
+      </GreenButton>
+    </>
+  );
   //full screen logic
   const handle = useFullScreenHandle();
-  // console.log("handle ", handle);
+  console.log("handle:  ", handle.active);
   return (
     <FullScreen handle={handle}>
       <ResizableContainer height={graphHeight} width={graphWidth}>
@@ -123,7 +130,12 @@ const VTIGraph = ({ graphId, componentKey, onRemove }) => {
           />
 
           <TabContainer className="tab-container">
-            <TabContent className="tab-content">
+            <div
+              className="tab-content"
+              style={
+                {margin:"20px"}
+              }
+            >
               {activeTab.tabNumber === 1 && (
                 <div>
                   <VoltageLineChart
@@ -131,6 +143,7 @@ const VTIGraph = ({ graphId, componentKey, onRemove }) => {
                     num_bms={num_bms}
                     graphTab={activeTab.tabNumber}
                     selectedBmsIndex={0}
+                    isInFullScreen={handle.active}
                   />
                 </div>
               )}
@@ -141,6 +154,7 @@ const VTIGraph = ({ graphId, componentKey, onRemove }) => {
                     num_bms={num_bms}
                     graphTab={activeTab.tabNumber}
                     selectedBmsIndex={0}
+                    isInFullScreen={handle.active}
                   />
                 </div>
               )}
@@ -151,10 +165,11 @@ const VTIGraph = ({ graphId, componentKey, onRemove }) => {
                     num_bms={num_bms}
                     graphTab={activeTab.tabNumber}
                     selectedBmsIndex={0}
+                    isInFullScreen={handle.active}
                   />
                 </div>
               )}
-            </TabContent>
+            </div>
           </TabContainer>
         </div>
       </ResizableContainer>

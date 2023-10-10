@@ -8,9 +8,18 @@ const Container = styled.div`
   padding: 28px 24px;
 `;
 
-function LineChart({ data }) {
+function LineChart({ data, isInFullScreen }) {
   const [chartData, setChartData] = useState(data);
-
+  console.log("data line chart: ")
+  console.log(data);
+  var labelY = "Voltage";
+  if(data.length === 5){
+    labelY = "Temperature";
+  }else if(data.length === 1){
+    labelY = "Current"
+  }else{
+    labelY = "Voltage"
+  }
   useEffect(() => {
     const visibleSeries = data.filter((series) => {
       return series.visible;
@@ -29,6 +38,9 @@ function LineChart({ data }) {
     },
     xaxis: {
       type: "datetime",
+      title: {
+        text: "Time",
+      },
       labels: {
         datetimeFormatter: {
           year: "yyyy",
@@ -38,6 +50,16 @@ function LineChart({ data }) {
         },
       },
       // tickAmount: 10, // Adjust this number to control the number of x-axis ticks
+    },
+    yaxis: {
+      show: true,
+      showAlways: true,
+      title: {
+        text: labelY,
+      },
+      label: {
+        show: true,
+      },
     },
     colors: [
       "#ff5733", // Red
@@ -57,6 +79,12 @@ function LineChart({ data }) {
       "#7b68ee", // Medium Slate Blue
       "#20b2aa", // Light Sea Green
     ],
+    tooltip:{
+      enabled:true,
+      style:{
+        fontSize: isInFullScreen? '12px' : '10px'
+      }
+    }
   };
 
   return (
@@ -65,7 +93,7 @@ function LineChart({ data }) {
         options={chartOptions}
         series={chartData}
         type="line"
-        height={300}
+        height={isInFullScreen ? 600 : 350}
       />
     </div>
   );
