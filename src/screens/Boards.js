@@ -90,6 +90,9 @@ const Customers = () => {
   const num_bms = useSelector((state) => state.bms);
   const [td, setTD] = useState([]);
   const [showGraph, setShowGraph] = useState(0);
+  const time = useSelector((state) => state.timestamp);
+  const [start, setStart] = useState(-1);
+  const [stop, setStop] = useState(-1);
   const columns = [
     {
       title: "Name",
@@ -175,29 +178,88 @@ const Customers = () => {
     }
   }, [voltage, current, temp]);
 
-  function preprocess(data) {
+  function startRec() {
+    console.log("started recording");
+    setStart(voltage[`bms 0`].length);
+    console.log(voltage[`bms 0`].length, time[time.length - 1]);
+  }
+
+  function stopRec() {
+    console.log("stopped recording");
+    setStop(voltage[`bms 0`].length);
+    console.log(voltage[`bms 0`].length, time[time.length - 1]);
+  }
+
+  function preprocess2d(data, st, en) {
     var k = data[0].length;
     for (var i = 0; i < data[0].length; i++) {
-      if (data[0][i] == undefined) {
+      if (data[0][i] === undefined) {
         k = i;
         break;
       }
     }
-    var section = data.slice(0, data.length).map((i) => i.slice(0, k));
+    var section = data.slice(st, en).map(i => i.slice(0, k));
     return section;
   }
 
-  function exportData() {
+  function preprocess1d(data, st, en) {
+    var section = data.slice(st, en);
+    return section;
+  }
+
+
+  function preprocesstime(data, st, en) {
+    var section = data.slice(st, en);
+    var timeFormats = [];
+
+    for (const timestamp of section) {
+      const seconds = timestamp / 1000; // Convert milliseconds to seconds
+      const dt = new Date(seconds * 1000); // Convert seconds to milliseconds
+      const timeFormat = dt.toISOString().slice(11, 19); // Extract HH:MM:SS from ISO string
+      timeFormats.push(timeFormat);
+    }
+
+    return timeFormats;
+  }
+
+  function is2DArray(arr) {
+    return arr.some(Array.isArray);
+  }
+
+  function exportData(f) {
     console.log("Export Started");
     var XLSX = require("xlsx");
     var wb = XLSX.utils.book_new();
     for (var i = 0; i < num_bms; i++) {
       var voldata = voltage[`bms ${i}`];
-      voldata = preprocess(voldata);
       var tempdata = temp[`bms ${i}`];
-      tempdata = preprocess(tempdata);
+      var st = 0, en = voldata.length;
+      if (f) {
+        if (start !== -1) {
+          st = start;
+        }
+        if (stop !== -1) {
+          en = stop;
+        }
+      }
 
-      var head = ["Current"];
+      if (is2DArray(voldata)) {
+        voldata = preprocess2d(voldata, st, en);
+      }
+      else {
+        voldata = preprocess1d(voldata, st, en);
+      }
+
+      if (is2DArray(tempdata)) {
+        tempdata = preprocess2d(tempdata, st, en);
+      }
+      else {
+        tempdata = preprocess1d(tempdata, st, en);
+      }
+      var time1 = preprocesstime(time, st, en);
+      var cur = preprocess1d(current, st, en);
+
+      var head = ["Timestamp", "Current"];
       for (var j = 0; j < voldata[0].length; j++) {
         head.push("V ".concat(j + 1));
       }
@@ -207,7 +269,7 @@ const Customers = () => {
 
       var result = [head];
       for (var j = 0; j < voldata.length; j++) {
-        var row = [current[j]].concat(voldata[j]);
+        var row = [time1[j], cur[j]].concat(voldata[j]);
         row = row.concat(tempdata[j]);
         result.push(row);
       }
@@ -220,14 +282,30 @@ const Customers = () => {
       "DataFile.xlsx"
     );
     console.log("Exported");
+    setStart(-1);
+    setStop(-1);
   }
+
+  const [isRecording, setIsRecording] = useState(false);
+
+  const handleToggleClick = () => {
+    if (isRecording) {
+      stopRec();
+    } else {
+      startRec();
+    }
+    setIsRecording(!isRecording);
+  };
 
   return (
     <Container>
       <HeadingRow>
         <Heading children="Dynamic data" />
-
-        <GreenButton onClick={() => exportData()}>Export</GreenButton>
+        <GreenButton onClick={handleToggleClick}>
+          {isRecording ? 'Stop Rec' : 'Start Rec'}
+        </GreenButton>
+        <GreenButton onClick={() => exportData(1)}>Export Rec</GreenButton>
+        <GreenButton onClick={() => exportData(0)}>Export Session</GreenButton>
       </HeadingRow>
       <HeadingRow>
         <VoltageRadialChart index={showGraph} graphData={voltage} />

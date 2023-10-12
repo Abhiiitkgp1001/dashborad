@@ -113,6 +113,10 @@ const VTIGraph = ({ graphId, componentKey, onRemove }) => {
   const graphWidth = "100%";
   const graphHeight = "100%";
 
+  const [binStatus, setBinStatus] = useState('all');
+  const handleTabClick = (tab) => {
+    setBinStatus(tab);
+  };
   //for updating chart data
   useEffect(() => {
     setChartData((prevData) => {
@@ -120,11 +124,22 @@ const VTIGraph = ({ graphId, componentKey, onRemove }) => {
       if (playPause.btn) {
         if (num_bms > 0) {
           for (let j = 0; j < num_bms; j++) {
+            var start = 0, end = voltage["bms " + j].length;
+            if (binStatus == 'last30s') {
+              start = Math.max(0, end - 10);
+            }
+            else if (binStatus == 'last60s') {
+              start = Math.max(0, end - 20);
+            }
+            else if (binStatus == 'last5min') {
+              start = Math.max(0, end - 100);
+            }
+            // console.log(start, end);
             updatedData.voltageData["bms_" + j] = [];
             updatedData.tempData["bms_" + j] = [];
             updatedData.currentData["bms_" + j] = [];
             if (Object.keys(voltage).length !== 0) {
-              for (let i = 0; i < voltage["bms " + j].length; i++) {
+              for (let i = start; i < end; i++) {
                 //set current data as its index contains only single values
                 if (updatedData.currentData["bms_" + j].length > 0) {
                   updatedData.currentData["bms_" + j][0].data.push({
@@ -140,7 +155,6 @@ const VTIGraph = ({ graphId, componentKey, onRemove }) => {
                       : true,
                   });
                 }
-
                 for (let k = 0; k < voltage["bms " + j][0].length; k++) {
                   //length of all volatges coming in series will be same as number are voltages are fixed
                   if (voltage["bms " + j][i][k] !== undefined) {
@@ -199,7 +213,7 @@ const VTIGraph = ({ graphId, componentKey, onRemove }) => {
 
       return { id: graphId, data: updatedData };
     });
-  }, [voltage, temp, current, time]);
+  }, [voltage, temp, current, time, binStatus]);
 
   useEffect(() => {
     dispatch(dataAction.setChartData(ChartData));
@@ -328,6 +342,36 @@ const VTIGraph = ({ graphId, componentKey, onRemove }) => {
               )}
             </TabContent>
           </TabContainer>
+          {/*  */}
+          <div className="menu-bar">
+            <div className="tabs">
+              <div
+                className={`tab ${binStatus === 'last30s' ? 'active' : 'inactive'}`}
+                onClick={() => handleTabClick('last30s')}
+              >
+                Last 30s
+              </div>
+              <div
+                className={`tab ${binStatus === 'last60s' ? 'active' : 'inactive'}`}
+                onClick={() => handleTabClick('last60s')}
+              >
+                Last 60s
+              </div>
+              <div
+                className={`tab ${binStatus === 'last5min' ? 'active' : 'inactive'}`}
+                onClick={() => handleTabClick('last5min')}
+              >
+                Last 5min
+              </div>
+              <div
+                className={`tab ${binStatus === 'all' ? 'active' : 'inactive'}`}
+                onClick={() => handleTabClick('all')}
+              >
+                All
+              </div>
+            </div>
+          </div>
+          {/*  */}
         </div>
       </ResizableContainer>
     </FullScreen>
