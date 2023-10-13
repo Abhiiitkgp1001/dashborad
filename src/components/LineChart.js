@@ -11,14 +11,14 @@ const Container = styled.div`
 function LineChart({ data, isInFullScreen }) {
   const [chartData, setChartData] = useState(data);
   console.log("data line chart: ")
-  console.log(data);
+  console.log(data[0]?.name);
   var labelY = "Voltage";
-  if(data.length === 5){
+  if(data[0]?.name === "T_1"){
     labelY = "Temperature";
-  }else if(data.length === 1){
-    labelY = "Current"
-  }else{
-    labelY = "Voltage"
+  }else if (data[0]?.name === "V_1") {
+    labelY = "Voltage";
+  } else {
+    labelY = " ";
   }
   useEffect(() => {
     const visibleSeries = data.filter((series) => {

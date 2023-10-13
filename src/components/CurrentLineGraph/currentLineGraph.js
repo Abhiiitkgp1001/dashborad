@@ -137,7 +137,23 @@ const CurrentLineChart = ({ selectedBmsIndex, isInFullScreen }) => {
           hour: "HH:mm",
         },
       },
+      title:{
+          text:"Time",
+      },
+      label:{
+        show:true
+      },
       tickAmount: 10, // Adjust this number to control the number of x-axis ticks
+    },
+    yaxis: {
+      show: true,
+      showAlways: true,
+      title: {
+        text: "Current",
+      },
+      label: {
+        show: true,
+      },
     },
   };
 
