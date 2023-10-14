@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 
 const Chart = styled.div`
-    height : 600px;
+    height : 400px;
     flex: 1;
     font-family: Poppins;
     font-weight : 700;
@@ -48,7 +48,7 @@ const TempRadialChart = ({index2, graphData2}) => {
                       panX: false,
                       panY: false,
                       wheelX: "panX",
-                      innerRadius: am5.percent(40),
+                      innerRadius: am5.percent(10),
                       radius: am5.percent(70),
                       arrangeTooltips: false
                     })
@@ -100,7 +100,7 @@ const TempRadialChart = ({index2, graphData2}) => {
                   });
                   
                   series2 = chart2.series.push(
-                    am5radar.RadarLineSeries.new(root2, {
+                    am5radar.SmoothedRadarLineSeries.new(root2, {
                       name: "Temperature",
                       xAxis: xAxis2,
                       yAxis: yAxis2,
@@ -120,17 +120,24 @@ const TempRadialChart = ({index2, graphData2}) => {
                     visible: true,
                     fillOpacity: 0.5
                   });
-                  
+                  series2.bullets.push(function(root2) {
+                    return am5.Bullet.new(root2, {
+                      sprite: am5.Circle.new(root2, {
+                        radius: 4,
+                        fill: series2.get("fill")
+                      })
+                    });
+                  });
                  
                   
-                  let legend2 = chart2.radarContainer.children.push(
-                    am5.Legend.new(root2, {
-                      width: 150,
-                      centerX: am5.p50,
-                      centerY: am5.p50
-                    })
-                  );
-                  legend2.data.setAll([series2]);
+                  // let legend2 = chart2.radarContainer.children.push(
+                  //   am5.Legend.new(root2, {
+                  //     width: 150,
+                  //     centerX: am5.p50,
+                  //     centerY: am5.p50
+                  //   })
+                  // );
+                  // legend2.data.setAll([series2]);
                   console.log(data2);
                   series2.data.setAll(data2);
                   xAxis2.data.setAll(data2);

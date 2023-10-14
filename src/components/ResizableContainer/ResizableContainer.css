@@ -1,0 +1,18 @@
+.resizable-container {
+  position: relative;
+  margin: auto;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  background-color: #fff;
+  padding: 10px;
+  overflow: scroll; /* Hide overflowing content when resized */
+  cursor: auto;
+  align-items: flex-start;
+}
+.resizable-container::-webkit-scrollbar {
+  display: none;
+}
+
+.child-component {
+  padding: 0px 10px;
+}

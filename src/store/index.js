@@ -1,97 +1,191 @@
-import {configureStore, createSlice} from '@reduxjs/toolkit';
+import { configureStore, createSlice } from "@reduxjs/toolkit";
 
-const initialState = {bms:0,cells:0,current:[],voltage:{},temp:{}, deviceConnected:false, consoleArray:[], importGraphState:{}};
+const initialState = {
+  bms: 0,
+  cells: 0,
+  current: [],
+  voltage: {},
+  temp: {},
+  timestamp: [],
+  deviceConnected: false,
+  chartData: [],
+  voltageChartData: [],
+  tempChartData: [],
+  graphActiveTab: [],
+  graphActiveBMSIndex: [],
+  graphPlayPause: [],
+  consoleArray: [],
+};
 
 const dataSlice = createSlice({
-  name: 'bms',
+  name: "bms",
   initialState: initialState,
   reducers: {
     setDeviceConnected: (state, action) => {
-        state.deviceConnected = action.payload;
+      state.deviceConnected = action.payload;
     },
     setBMS: (state, action) => {
-        // var data = action.payload;
-        // console.log(data);
-        var data = "A=2;";
-        var slicedData = data.substring(2).replace(';','');
-        state.consoleArray.push(data);
-        state.bms = slicedData;
+      // var data = action.payload;
+      // console.log(data);
+      var data = "A=2;";
+      var slicedData = data.substring(2).replace(";", "");
+      state.consoleArray.push(data);
+      state.bms = slicedData;
     },
     setCells: (state, action) => {
-        var data = "B=20;";
-        // var data = action.payload;
-        var slicedData = data.substring(2).replace(';','');
-        state.consoleArray.push(data);
-        state.cells = slicedData;
+      // var data = action.payload;
+      var data = "B=20;";
+      var slicedData = data.substring(2).replace(";", "");
+      state.consoleArray.push(data);
+      state.cells = slicedData;
     },
     setCurrent: (state, action) => {
-        var data = "I=18;";
-        // var data = action.payload;
-        var slicedData = data.substring(2).replace(';','');
-        state.consoleArray.push(data);
-        // state.current.push(slicedData);
-        state.current.push(Math.round(Math.random()*1000)/100);
-    },
-    setVoltage: (state,action)=>{
-       var data = "V=0,80;1,2;2,4;3,8;4,2;5,6;6,2;7,2;8,1;9,0;10,99;11,32;12,2;13,6;14,2;15,2;16,1;17,0;18,99;19,32;20,13;"
-        // var data = action.payload;
-        var slicedData = data.substring(2).split(';');
-        state.consoleArray.push(data);
-        slicedData.pop();
-        var num_bms = slicedData.length%16==0 ? parseInt(slicedData.length/16) : parseInt(slicedData.length/16)+1;
-        var vol = Array.from({ length: num_bms }, () => Array(16).fill(undefined));
-        
-        for(var i=0;i<num_bms;i++){
-            for(var j=0;j<16;j++){
-                if((16*i+j)<slicedData.length)
-                    // vol[i][j] = parseFloat(slicedData[16*i+j].split(',')[1]);
-                    vol[i][j] = Math.round(Math.random()*1000)/100;
-            }
-        }
-        var obj = {...state.voltage};
-        
-        for(var i=0;i<num_bms;i++){
-            if(!Object.keys(obj).includes(`bms ${i}`))
-                obj[`bms ${i}`]=[];    
-            obj[`bms ${i}`].push(vol[i]);
-        }
-        console.log(obj);
-        state.voltage = obj;
-    },
-    setTemp: (state,action)=>{
-        var data = "T=0,1;1,2;2,4;3,8;4,2;5,6;6,2;7,2;"
-        // var data = action.payload;
-        console.log(data);
-        var slicedData = data.substring(2).split(';');
-        state.consoleArray.push(data);
-        slicedData.pop();
-        var num_bms = slicedData.length%5==0 ? parseInt(slicedData.length/5) :parseInt(slicedData.length/5)+1;
-        var temp = Array.from({ length: num_bms }, () => Array(5).fill(undefined));
-        
-        for(var i=0;i<num_bms;i++){
-            for(var j=0;j<5;j++){
-                if((5*i+j)<slicedData.length)
-                    // temp[i][j] = parseFloat(slicedData[5*i+j].split(',')[1]);
-                    temp[i][j] = Math.round(Math.random()*1000)/100;
-            }
-        }
-        var obj = {...state.temp};
-        
-        for(var i=0;i<num_bms;i++){
-            if(!Object.keys(obj).includes(`bms ${i}`))
-                obj[`bms ${i}`]=[];    
-            obj[`bms ${i}`].push(temp[i]);
-        }
-        state.temp = obj;
-    }
+      var data = `I=${Math.round(Math.random()*1000)/100};`;
+      // var data = action.payload;
+      var slicedData = data.substring(2).replace(";", "");
+      state.consoleArray.push(data);
 
-    
+      state.current.push(slicedData);
+    },
+    setVoltage: (state, action) => {
+      var data =
+        "V=0,80;1,2;2,4;3,8;4,2;5,6;6,2;7,2;8,1;9,0;10,99;11,32;12,2;13,6;14,2;15,2;16,1;17,0;18,99;19,32;20,13;";
+      // var data = action.payload;
+      var slicedData = data.substring(2).split(";");
+      state.consoleArray.push(data);
+      slicedData.pop();
+      var num_bms =
+        slicedData.length % 16 == 0
+          ? parseInt(slicedData.length / 16)
+          : parseInt(slicedData.length / 16) + 1;
+      var vol = Array.from({ length: num_bms }, () =>
+        Array(16).fill(undefined)
+      );
+
+      for (var i = 0; i < num_bms; i++) {
+        for (var j = 0; j < 16; j++) {
+          if (16 * i + j < slicedData.length)
+            // vol[i][j] = parseFloat(slicedData[16*i+j].split(',')[1]);
+            vol[i][j] = Math.round(Math.random() * 1000) / 100;
+        }
+      }
+      var obj = { ...state.voltage };
+
+      for (var i = 0; i < num_bms; i++) {
+        if (!Object.keys(obj).includes(`bms ${i}`)) obj[`bms ${i}`] = [];
+        obj[`bms ${i}`].push(vol[i]);
+      }
+      // console.log(obj);
+      state.voltage = obj;
+    },
+    setTemp: (state, action) => {
+      var data = "T=0,1;1,2;2,4;3,8;4,2;5,6;6,2;7,2;";
+      // var data = action.payload;
+      // console.log(data);
+      var slicedData = data.substring(2).split(";");
+      state.consoleArray.push(data);
+      slicedData.pop();
+      var num_bms =
+        slicedData.length % 5 == 0
+          ? parseInt(slicedData.length / 5)
+          : parseInt(slicedData.length / 5) + 1;
+      var temp = Array.from({ length: num_bms }, () =>
+        Array(5).fill(undefined)
+      );
+
+      for (var i = 0; i < num_bms; i++) {
+        for (var j = 0; j < 5; j++) {
+          if (5 * i + j < slicedData.length)
+            // temp[i][j] = parseFloat(slicedData[5*i+j].split(',')[1]);
+            temp[i][j] = Math.round(Math.random() * 1000) / 100;
+        }
+      }
+      var obj = { ...state.temp };
+
+      for (var i = 0; i < num_bms; i++) {
+        if (!Object.keys(obj).includes(`bms ${i}`)) obj[`bms ${i}`] = [];
+        obj[`bms ${i}`].push(temp[i]);
+      }
+      state.temp = obj;
+    },
+    setTempChartData: (state, action) => {
+      var data = action.payload;
+      let prevChartData = state.tempChartData.filter(
+        (chart) => chart.id !== data.id
+      );
+      if (data.btn === null) {
+        state.tempChartData = [...prevChartData];
+      } else {
+        state.tempChartData = [...prevChartData, data];
+      }
+    },
+    setVoltageChartData: (state, action) => {
+      var data = action.payload;
+      let prevChartData = state.voltageChartData.filter(
+        (chart) => chart.id !== data.id
+      );
+      if (data.data === null) {
+        state.voltageChartData = [...prevChartData];
+      } else {
+        state.voltageChartData = [...prevChartData, data];
+      }
+    },
+    setGraphActiveTab: (state, action) => {
+      var data = action.payload;
+      let prevChartData = state.graphActiveTab.filter(
+        (chart) => chart.id !== data.id
+      );
+      if (data.tabNumber === null) {
+        state.graphActiveTab = [...prevChartData];
+      } else {
+        state.graphActiveTab = [...prevChartData, data];
+      }
+    },
+    setGraphActiveBMSIndex: (state, action) => {
+      var data = action.payload;
+      let prevChartData = state.graphActiveBMSIndex.filter(
+        (chart) => chart.id !== data.id
+      );
+      if (data.bms === null) {
+        state.graphActiveBMSIndex = [...prevChartData];
+      } else {
+        state.graphActiveBMSIndex = [...prevChartData, data];
+      }
+    },
+    setGraphPlayPause: (state, action) => {
+      var data = action.payload;
+      let prevChartData = state.graphPlayPause.filter(
+        (chart) => chart.id !== data.id
+      );
+      if (data.btn === null) {
+        state.graphPlayPause = [...prevChartData];
+      } else {
+        state.graphPlayPause = [...prevChartData, data];
+      }
+    },
+    setTimeStamp: (state, action) => {
+      var data = action.payload;
+      var currentdate = new Date().getTime() + 330 * 60 * 1000;
+      state.timestamp.push(currentdate);
+      // console.log(currentdate);
+    },
+
+    setChartData: (state, action) => {
+      var data = action.payload;
+      let prevChartData = state.chartData.filter(
+        (chart) => chart.id !== data.id
+      );
+      if (data.data === null) {
+        state.chartData = [...prevChartData];
+      } else {
+        state.chartData = [...prevChartData, data];
+      }
+    },
   },
 });
 
-
 export const dataAction = dataSlice.actions;
 
-const store = configureStore({reducer: dataSlice.reducer});
+const store = configureStore({ reducer: dataSlice.reducer });
 
 export default store;

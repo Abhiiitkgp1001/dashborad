@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 
 const Chart = styled.div`
-    height : 600px;
+    height : 400px;
     flex: 1;
     font-family: Poppins;
     font-weight : 700;
@@ -48,7 +48,7 @@ const VoltageRadialChart = ({index, graphData}) => {
                       panX: false,
                       panY: false,
                       wheelX: "panX",
-                      innerRadius: am5.percent(40),
+                      innerRadius: am5.percent(10),
                       radius: am5.percent(70),
                       arrangeTooltips: false
                     })
@@ -100,7 +100,7 @@ const VoltageRadialChart = ({index, graphData}) => {
                   });
                   
                   series = chart.series.push(
-                    am5radar.RadarLineSeries.new(root, {
+                    am5radar.SmoothedRadarLineSeries.new(root, {
                       name: "Voltage",
                       xAxis: xAxis,
                       yAxis: yAxis,
@@ -121,16 +121,23 @@ const VoltageRadialChart = ({index, graphData}) => {
                     fillOpacity: 0.5
                   });
                   
-                 
+                  series.bullets.push(function(root) {
+                    return am5.Bullet.new(root, {
+                      sprite: am5.Circle.new(root, {
+                        radius: 4,
+                        fill: series.get("fill")
+                      })
+                    });
+                  });
                   
-                  let legend = chart.radarContainer.children.push(
-                    am5.Legend.new(root, {
-                      width: 150,
-                      centerX: am5.p50,
-                      centerY: am5.p50
-                    })
-                  );
-                  legend.data.setAll([series]);
+                  // let legend = chart.radarContainer.children.push(
+                  //   am5.Legend.new(root, {
+                  //     width: 150,
+                  //     centerX: am5.p50,
+                  //     centerY: am5.p50
+                  //   })
+                  // );
+                  // legend.data.setAll([series]);
                   console.log(data);
                   series.data.setAll(data);
                   xAxis.data.setAll(data);

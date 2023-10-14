@@ -1,0 +1,24 @@
+#component-container {
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+  margin: auto;
+  padding: auto;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.chart{
+  // border: 100px solid rgb(255, 255, 255);
+  width: 50%;
+}
+
+.chartInList{
+  width: 100%;
+}
+
+@media (max-width: 991px) {
+  .chart{
+    width: 100%;
+  }
+}
