@@ -17,6 +17,8 @@ function LineChart({ data, isInFullScreen }) {
     labelY = "Temperature";
   }else if (data[0]?.name === "V_1") {
     labelY = "Voltage";
+  } else if (data[0]?.name === "C") {
+    labelY = "Current";
   } else {
     labelY = " ";
   }
