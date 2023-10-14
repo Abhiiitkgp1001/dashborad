@@ -1,4 +1,7 @@
 export function mean(numbers) {
+    for(var i=0;i<numbers.length;i++){
+        numbers[i] = parseFloat(numbers[i].toString());
+    }
     var total = 0, i;
     for (i = 0; i < numbers.length; i += 1) {
         total += numbers[i];
@@ -8,6 +11,9 @@ export function mean(numbers) {
  
 export function median(numbers) {
     // median of [3, 5, 4, 4, 1, 1, 2, 3] = 3
+    for(var i=0;i<numbers.length;i++){
+        numbers[i] = parseFloat(numbers[i].toString());
+    }
     var median = 0, numsLen = numbers.length;
     numbers.sort();
  
@@ -26,7 +32,9 @@ export function median(numbers) {
  
 export function mode(numbers) {
     var modes = [], count = [], i, number, maxIndex = 0;
- 
+    for(var i=0;i<numbers.length;i++){
+        numbers[i] = parseFloat(numbers[i].toString());
+    }
     for (i = 0; i < numbers.length; i += 1) {
         number = numbers[i];
         count[number] = (count[number] || 0) + 1;
@@ -46,6 +54,9 @@ export function mode(numbers) {
 }
 
 export function standardDeviation(arr) {
+    for(var i=0;i<arr.length;i++){
+        arr[i] = parseFloat(arr[i].toString());
+    }
     const mean = arr.reduce((acc, val) => acc + val, 0) / arr.length;
     return Math.sqrt(
         arr.reduce((acc, val) => acc.concat((val - mean) ** 2), []).reduce((acc, val) => acc + val, 0) /

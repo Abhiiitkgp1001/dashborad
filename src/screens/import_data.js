@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import Heading from '../components/heading';
-// import Papa from "papaparse";
 import { read, utils} from 'xlsx';
 import AreaChart from '../components/AreaChart';
 import { mean, median, standardDeviation } from '../helpers/utils';
@@ -154,14 +153,24 @@ const ImportData = () => {
                             let obj = data[key][i];
                             for (let j in obj) {
                                 filtered_data[j] = filtered_data[j]||[];
-                                filtered_data[j].push(obj[j]);
+                                if(j=="Timestamp"){
+                                  var date = obj[j].toString().slice();
+                                  let formattedDate = date.slice().substring(0,10).replaceAll("-","/");
+                                  let formattedTime = date.slice().substring(11);
+                                  formattedTime = formattedTime.substring(0,8)
+                                  filtered_data[j].push(formattedDate+" "+formattedTime);
+                                }else{
+                                  filtered_data[j].push(obj[j]);
+                                }
                             }
                         }
                         let legend = {};
                         for(let i in filtered_data){
-                            legend[i] = {
+                            if(i!="Timestamp"){
+                              legend[i] = {
                                 name:i,
                                 visible: false,
+                            }
                             }
                         }
                         parsedData[key] = {
@@ -169,7 +178,7 @@ const ImportData = () => {
                             legend : legend
                         }
                     }
-                    // console.log(parsedData);
+                     console.log(parsedData);
                     setBMSData(parsedData);
                     setBMSGraphs(graphs);
 
@@ -181,7 +190,8 @@ const ImportData = () => {
                         let data_medians = [];
                         let data_stds = [];
                         for(let i in parsedData[key].data){
-                            let cur_mean = Math.round(mean([...parsedData[key].data[i]])*100)/100;
+                            if(i!="Timestamp"){
+                              let cur_mean = Math.round(mean([...parsedData[key].data[i]])*100)/100;
                             data_means.push({
                                 name: i,
                                 value : cur_mean
@@ -196,6 +206,7 @@ const ImportData = () => {
                                 name: i,
                                 value : cur_mode
                             })
+                            }
                         }
                         overall_data_means[key] = data_means;
                         overall_data_medians[key] = data_medians;
@@ -270,7 +281,7 @@ const ImportData = () => {
           <SmallOne>Mean</SmallOne>
           <CalcOuterContainer className='noscroll'>
             {
-              data_mean[`BMS ${bms_active}`].map((item)=><CalcContainer style={{
+              data_mean[`BMS ${bms_active}`].map((item,index)=><CalcContainer key={index} style={{
                 backgroundColor: colors[0]
               }}>
                 <div style={{ fontWeight: 500}}>{item.name}</div>
@@ -282,7 +293,7 @@ const ImportData = () => {
           <SmallOne>Median</SmallOne>
           <CalcOuterContainer className='noscroll'>
             {
-              data_median[`BMS ${bms_active}`].map((item)=><CalcContainer style={{
+              data_median[`BMS ${bms_active}`].map((item,index)=><CalcContainer key={index} style={{
                 backgroundColor: colors[1]
               }}>
                 <div  style={{ fontWeight: 500}}>{item.name}</div>
@@ -294,7 +305,7 @@ const ImportData = () => {
           <SmallOne>Standard Deviation</SmallOne>
           <CalcOuterContainer className='noscroll'>
             {
-              data_std[`BMS ${bms_active}`].map((item)=><CalcContainer style={{
+              data_std[`BMS ${bms_active}`].map((item,index)=><CalcContainer key={index} style={{
                 backgroundColor: colors[2]
               }}>
                 <div  style={{ fontWeight: 500}}>{item.name}</div>

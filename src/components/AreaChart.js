@@ -3,6 +3,8 @@ import Chart from "react-apexcharts";
 import styled from 'styled-components'
 import { mean, median, mode, standardDeviation } from '../helpers/utils';
 import { FullScreen, useFullScreenHandle } from "react-full-screen";
+import { FaXmark } from "react-icons/fa6";
+import { BsFullscreen} from "react-icons/bs";
 
 import SmallOne from './smallOne';
 const Container = styled.div`
@@ -59,14 +61,15 @@ const RedButton = styled.div`
 margin-top: auto;
 margin-left: 8px;
 display: flex;
-padding: 8px 16px;
+padding: 8px;
 background-color: #A73121;
-border-radius: 6px;
+border-radius: 40px;
 color: #C9F7F5;
 opacity: 0.65;
 cursor:pointer;
 font-family: Poppins;
 font-size: 12px;
+font-weight: 700;
 justify-content: center;
 align-items: center;
 font-weight : 700;
@@ -152,8 +155,9 @@ const AreaChart = (props) => {
   });
   
   useEffect(() => {
+    console.log(props.data)
     var xaxis = {
-      tickAmount: props.tickAmount,
+      // tickAmount: props.tickAmount,
       axisBorder: {
         show: false
       },
@@ -169,7 +173,10 @@ const AreaChart = (props) => {
       if(props.data.legend[i].visible==true){
         filted_data_via_legends.push({
           name: props.data.legend[i].name,
-          data: props.data.data[props.data.legend[i].name]
+          data: props.data.data[props.data.legend[i].name].map((item,index)=>({
+            x: props.data.data["Timestamp"][index],
+            y: item,
+          })) 
         });
       }
     }
@@ -194,15 +201,18 @@ const AreaChart = (props) => {
           <Header>
           <RedButton onClick={()=>{
             props.removeGraph(props.index);
-          }}>Delete Graph</RedButton>
-          <RedButton onClick={graphFullScreen.enter}>FullScreen</RedButton>
+          }}><FaXmark/></RedButton>
+          <RedButton style={{
+            backgroundColor: '#000'            
+          }} onClick={graphFullScreen.enter}><BsFullscreen/></RedButton>
           </Header>
           </Header> 
+          <SizedBox/>
           <SizedBox/>
           <FullScreen  handle={graphFullScreen}>
           <WhiteContainer style={
             {
-              height:graphFullScreen.active?'100%':'450px',
+              height:graphFullScreen.active?'100%':'490px',
               padding: graphFullScreen.active? '20px 24px':'0px'
             }
           }>
@@ -211,7 +221,7 @@ const AreaChart = (props) => {
             options={chartData.options}
             series={chartData.series}
             type='line'
-            height={graphFullScreen.active?'90%':'360px'}
+            height={graphFullScreen.active?'90%':'400px'}
           />
           <LegendContainer className='noscroll'>
           {

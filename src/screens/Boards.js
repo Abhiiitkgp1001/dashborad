@@ -225,7 +225,9 @@ const Customers = () => {
     for (const timestamp of section) {
       const seconds = timestamp / 1000; // Convert milliseconds to seconds
       const dt = new Date(seconds * 1000); // Convert seconds to milliseconds
-      const timeFormat = dt.toISOString().slice(11, 19); // Extract HH:MM:SS from ISO string
+      console.log(dt.toISOString());
+      const timeFormat = dt.toISOString(); // Extract HH:MM:SS from ISO string
+      
       timeFormats.push(timeFormat);
     }
 
