@@ -2,11 +2,18 @@ import React, { useState, useEffect } from 'react';
 import Chart from "react-apexcharts";
 import styled from 'styled-components'
 import { mean, median, mode, standardDeviation } from '../helpers/utils';
+import { FullScreen, useFullScreenHandle } from "react-full-screen";
+
 import SmallOne from './smallOne';
 const Container = styled.div`
     display: flex;
     flex-direction: column;
     padding : 28px 24px;    
+`;
+const SizedBox = styled.div`
+    display: flex;
+    flex-direction: column;
+    height:8px;  
 `;
 const Header = styled.div`
   display: flex;
@@ -14,7 +21,11 @@ const Header = styled.div`
   justify-content: space-between;
 `;
 
-
+const WhiteContainer = styled.div`
+    display: flex;
+    flex-direction: column; 
+    background-color : white;  
+`;
 const LegendContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -64,7 +75,8 @@ font-weight : 700;
 }
 `;
 var filtered_data ={};
-var chart_options =  {    
+var chart_options =  {   
+    
   dataLabels: {
     enabled: false
   },
@@ -72,16 +84,17 @@ var chart_options =  {
     curve: 'smooth'
   },
   markers: {
-    size: 5,
+    size: 3.5,
   },
-  xaxis: {
-    axisBorder: {
-      show: false
-    },
-    axisTicks: {
-      show: false
-    }
-  },
+  // xaxis: {
+  //   // tickAmount: props.tickAmount,
+  //   axisBorder: {
+  //     show: false
+  //   },
+  //   axisTicks: {
+  //     show: true
+  //   }
+  // },
   yaxis: {
     tickAmount: 4,
     floating: false,
@@ -127,17 +140,31 @@ var chart_options =  {
   },
   
 };
+
 const AreaChart = (props) => {
   const [data_mean, setDataMean] = useState([]);
   const [data_median, setDataMedian] = useState([]);
   const [data_std, setDataStd] = useState([]);
+  const graphFullScreen = useFullScreenHandle();
   const [chartData, setChartData] = useState({
     series : [],
     options: chart_options
   });
-
+  
   useEffect(() => {
+    var xaxis = {
+      tickAmount: props.tickAmount,
+      axisBorder: {
+        show: false
+      },
+      axisTicks: {
+        show: true
+      }
+    };
+    chart_options = {...chart_options,xaxis};
+
       var filted_data_via_legends = [];
+      console.log(props.tickAmount);
     for(let i in props.data.legend){
       if(props.data.legend[i].visible==true){
         filted_data_via_legends.push({
@@ -164,18 +191,29 @@ const AreaChart = (props) => {
         
         <Header>
           <div/>
+          <Header>
           <RedButton onClick={()=>{
             props.removeGraph(props.index);
           }}>Delete Graph</RedButton>
-          </Header>  
+          <RedButton onClick={graphFullScreen.enter}>FullScreen</RedButton>
+          </Header>
+          </Header> 
+          <SizedBox/>
+          <FullScreen  handle={graphFullScreen}>
+          <WhiteContainer style={
+            {
+              height:graphFullScreen.active?'100%':'450px',
+              padding: graphFullScreen.active? '20px 24px':'0px'
+            }
+          }>
           <Chart
             id={props.id}
             options={chartData.options}
             series={chartData.series}
-            type="line"
-            height='360px'
+            type='line'
+            height={graphFullScreen.active?'90%':'360px'}
           />
-          <LegendContainer>
+          <LegendContainer className='noscroll'>
           {
             Object.keys(props.data.legend).map((item,index)=>{
             return <FeatureContainer style={{
@@ -188,6 +226,9 @@ const AreaChart = (props) => {
             >{props.data.legend[item].name}</FeatureContainer>})
           }
           </LegendContainer>
+          </WhiteContainer>
+            </FullScreen> 
+          
           
       </Container>
   );

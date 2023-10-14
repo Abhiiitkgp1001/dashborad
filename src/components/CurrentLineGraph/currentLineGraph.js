@@ -1,171 +1,108 @@
 import React, { useEffect, useState } from "react";
-import Chart from "react-apexcharts";
-import { useSelector } from "react-redux";
-import LineChart from "../LineChart";
-
+// import { FullScreen, useFullScreenHandle } from "react-full-screen";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
+import { dataAction } from "../../store";
+import ChartLegend from "../ChartLegends/ChartLegend";
+import LineChart from "../LineChart";
+import "./currentLineGraph.css";
+const _ = require("lodash");
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 28px 24px;
-`;
-const BMsSelectButtoneader = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  padding: 10px auto;
 `;
 
-const TabContainer = styled.div`
-  border: 1px solid #ccc;
-  margin: auto;
-  display: flex;
-  flex-direction: row;
-`;
+const MemoizedLineChart = React.memo(LineChart);
+const MemoizedChartLegend = React.memo(ChartLegend);
 
-const GreenTab = styled.div`
-  padding: 10px 20px;
-  margin: 5px;
-  width: fit-content;
-  text-align: center;
-  cursor: pointer;
-  background-color: #c9f7f5;
-  border-radius: 6px;
-  color: #1bc5bd;
-  cursor: pointer;
-  font-family: Poppins;
-  font-size: 12px;
-  justify-content: center;
-  align-items: center;
-  font-weight: 700;
-  &:hover {
-    color: #c9f7f5;
-    background-color: #1bc5bd;
-  }
-`;
-const GreenButton = styled.div`
-  margin-top: auto;
-  display: flex;
-  padding: 8px 16px;
-  background-color: #c9f7f5;
-  border-radius: 6px;
-  color: #1bc5bd;
-  cursor: pointer;
-  font-family: Poppins;
-  font-size: 12px;
-  justify-content: center;
-  align-items: center;
-  font-weight: 700;
-  &:hover {
-    color: #c9f7f5;
-    background-color: #1bc5bd;
-  }
-`;
+const CurrentLineChart = ({
+  chartData,
+  graphId,
+  graphTab,
+  num_bms,
+  selectedBmsIndex,
+  playPause,
+  togglePlayPause,
+  toggleSeriesVisibility,
+}) => {
+  const currentBMS = useSelector((state) => state.graphActiveBMSIndex);
+  const [activeBMS, setActiveBMS] = useState(
+    currentBMS.filter(
+      (bmsIndex) => bmsIndex.id === graphId + "_" + graphTab
+    )[0] || {
+      id: graphId + "_" + graphTab,
+      bms: selectedBmsIndex,
+    }
+  );
 
-const CurrentLineChart = ({ selectedBmsIndex, isInFullScreen }) => {
-  const time = useSelector((state) => state.timestamp);
-  const current = useSelector((state) => state.current);
-  const colors = [
-    0xff5733, // Red
-    0x33ff77, // Green
-    0x33b5ff, // Blue
-    0xff66b2, // Pink
-    0xa64d79, // Purple
-    0xffcb77, // Peach
-    0x66e0ff, // Sky Blue
-    0xa6ccff, // Light Blue
-    0xff99e6, // Light Pink
-    0x99ff66, // Lime Green
-    0xffd700, // Gold
-    0xffa07a, // Light Salmon
-    0x87cefa, // Light Sky Blue
-    0xff6347, // Tomato
-    0x7b68ee, // Medium Slate Blue
-    0x20b2aa, // Light Sea Green
-  ];
+  const [ChartData, setChartData] = useState(chartData);
 
-  let [g_data, setData] = useState({
-    options: {
-      chart: {
-        id: "apexchart-example",
-      },
-      xaxis: {
-        categories: [],
-      },
-    },
-    series: [],
-  });
+  const dispatch = useDispatch();
+  const bms_buttons = Array.from(
+    { length: num_bms - 0 },
+    (_, index) => 0 + index
+  );
 
   useEffect(() => {
-    let x = [];
-    let series = [];
-    let current_list = [];
-    if (current.length !== 0) {
-      for (let k = 0; k < current.length; k++) {
-        //length of all volatges coming in series will be same as number are voltages are fixed
-        current_list.push({
-          x: time[k],
-          y: current[k],
-        });
-        x.push(k);
-      }
-    }
-    series.push({
-      name: "Current",
-      data: current_list,
-    });
-    const data = {
-      series: series,
-    };
-    setData(data);
-  }, [current, time]);
-  const chartOptions = {
-    id: "chart",
-    stroke: {
-      width: 1,
-    },
-    legend: {
-      show: false,
-    },
-    xaxis: {
-      type: "datetime",
-      labels: {
-        datetimeFormatter: {
-          year: "yyyy",
-          month: "MMM 'yy",
-          day: "dd MMM",
-          hour: "HH:mm",
-        },
-      },
-      title:{
-          text:"Time",
-      },
-      label:{
-        show:true
-      },
-      tickAmount: 10, // Adjust this number to control the number of x-axis ticks
-    },
-    yaxis: {
-      show: true,
-      showAlways: true,
-      title: {
-        text: "Current",
-      },
-      label: {
-        show: true,
-      },
-    },
-  };
+    setChartData(chartData);
+  }, [chartData]);
+
+  useEffect(() => {
+    dispatch(
+      dataAction.setGraphActiveBMSIndex({
+        id: graphId + "_" + graphTab,
+        bms: activeBMS.bms,
+      })
+    );
+  }, [activeBMS]);
 
   return (
     <Container>
-      <Chart
-        options={chartOptions}
-        series={g_data.series}
-        type="line"
-        width={"100%"}
-        height={isInFullScreen ? 600: 350}
+      <div className={`menu-bar }`}>
+        <div
+          className={`${!playPause.btn ? "play-btn" : "pause-btn"}`}
+          onClick={togglePlayPause}
+        >
+          {playPause.btn ? "Pause" : "Play"}
+        </div>
+
+        <div className="tabs">
+          {bms_buttons.map((button) => (
+            <div
+              key={button}
+              className={` tab ${
+                button === activeBMS.bms ? "active" : "inactive"
+              }`}
+              onClick={() =>
+                setActiveBMS({ id: graphId + "_" + graphTab, bms: button })
+              }
+            >
+              BMS{button}
+            </div>
+          ))}
+        </div>
+      </div>
+      <MemoizedLineChart
+        data={
+          ChartData[`bms_${activeBMS.bms}`]
+            ? ChartData[`bms_${activeBMS.bms}`]
+            : []
+        }
       />
+      <MemoizedChartLegend
+        data={
+          ChartData[`bms_${activeBMS.bms}`]
+            ? ChartData[`bms_${activeBMS.bms}`]
+            : []
+        }
+        activeBMS={activeBMS}
+        graphType={graphTab}
+        onLegendItemClick={toggleSeriesVisibility}
+      />
+      {/* </div> */}
+      {/* </FullScreen> */}
     </Container>
   );
 };
