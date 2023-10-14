@@ -108,7 +108,28 @@ const dataSlice = createSlice({
       }
       state.temp = obj;
     },
-
+    setTempChartData: (state, action) => {
+      var data = action.payload;
+      let prevChartData = state.tempChartData.filter(
+        (chart) => chart.id !== data.id
+      );
+      if (data.btn === null) {
+        state.tempChartData = [...prevChartData];
+      } else {
+        state.tempChartData = [...prevChartData, data];
+      }
+    },
+    setVoltageChartData: (state, action) => {
+      var data = action.payload;
+      let prevChartData = state.voltageChartData.filter(
+        (chart) => chart.id !== data.id
+      );
+      if (data.data === null) {
+        state.voltageChartData = [...prevChartData];
+      } else {
+        state.voltageChartData = [...prevChartData, data];
+      }
+    },
     setGraphActiveTab: (state, action) => {
       var data = action.payload;
       let prevChartData = state.graphActiveTab.filter(
