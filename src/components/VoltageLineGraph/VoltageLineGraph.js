@@ -29,6 +29,7 @@ const VoltageLineChart = ({
   playPause,
   togglePlayPause,
   toggleSeriesVisibility,
+  isInFullScreen,
 }) => {
   const currentBMS = useSelector((state) => state.graphActiveBMSIndex);
   const [activeBMS, setActiveBMS] = useState(
@@ -104,6 +105,7 @@ const VoltageLineChart = ({
             ? ChartData[`bms_${activeBMS.bms}`]
             : []
         }
+        isInFullScreen={isInFullScreen}
       />
       <MemoizedChartLegend
         data={

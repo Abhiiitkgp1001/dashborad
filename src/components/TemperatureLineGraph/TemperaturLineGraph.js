@@ -26,6 +26,7 @@ const TemperatureLineChart = ({
   playPause,
   togglePlayPause,
   toggleSeriesVisibility,
+  isInFullScreen,
 }) => {
   const currentBMS = useSelector((state) => state.graphActiveBMSIndex);
   const [activeBMS, setActiveBMS] = useState(
@@ -102,6 +103,7 @@ const TemperatureLineChart = ({
             ? ChartData[`bms_${activeBMS.bms}`]
             : []
         }
+        isInFullScreen={isInFullScreen}
       />
       <MemoizedChartLegend
         data={
