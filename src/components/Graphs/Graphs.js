@@ -282,7 +282,7 @@ const VTIGraph = ({ graphId, componentKey, onRemove }) => {
       btn: !playPause.btn,
     });
   };
-  const removeBtn = <GreenButton onClick={onRemove}><FaXmark /> Remove</GreenButton>;
+  const removeBtn = <GreenButton onClick={onRemove}><FaXmark /></GreenButton>;
   //full screen logic
   const handle = useFullScreenHandle();
   console.log("handle:  ", handle.active);

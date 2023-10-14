@@ -65,22 +65,14 @@ const VoltageLineChart = ({
   // console.log(chartData);
   return (
     <Container>
-      <div className={`menu-bar }`}>
-        <div
-          className={`${!playPause.btn ? "play-btn" : "pause-btn"}`}
-          onClick={togglePlayPause}
-        >
-          {playPause.btn ? (
-            <>
-              <FaCirclePause />
-              {" Pause"}
-            </>
-          ) : (
-            <>
-              <FaCirclePlay />
-              {" Play"}
-            </>
-          )}
+      <div className={`menu-bar`}>
+        <div style={{display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center"}}>
+          <div
+            className={`${!playPause.btn ? "play-btn" : "pause-btn"}`}
+            onClick={togglePlayPause}
+          >
+            {playPause.btn ? <FaCirclePause /> : <FaCirclePlay />}
+          </div>
         </div>
         <div className="tabs">
           {bms_buttons.map((button) => (

@@ -67,15 +67,9 @@ const TemperatureLineChart = ({
           onClick={togglePlayPause}
         >
           {playPause.btn ? (
-            <>
               <FaCirclePause />
-              {" Pause"}
-            </>
           ) : (
-            <>
-              <FaCirclePlay />
-              {" Play"}
-            </>
+              <FaCirclePlay />              
           )}
         </div>
 
