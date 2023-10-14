@@ -42,15 +42,16 @@
 }
 
 .play-btn {
-  padding: 5px 10px;
+  padding: 5px;
   width: fit-content;
   text-align: center;
   cursor: pointer;
-  background-color: #32ba4b;
+  border-radius: 24px;
+  /* background-color: #32ba4b; */
   color: #e3edeb;
   cursor: pointer;
   font-family: Poppins;
-  font-size: 10px;
+  font-size: 1.2rem;
   justify-content: center;
   align-items: center;
   font-weight: 700;
@@ -61,15 +62,15 @@
 }
 
 .pause-btn {
-  padding: 5px 10px;
+  padding: 5px;
   width: fit-content;
   text-align: center;
   cursor: pointer;
-  background-color: #f02409;
+  border-radius: 24px;
   color: #e9f5f4;
   cursor: pointer;
   font-family: Poppins;
-  font-size: 10px;
+  font-size: 1.2rem;
   justify-content: center;
   align-items: center;
   font-weight: 700;

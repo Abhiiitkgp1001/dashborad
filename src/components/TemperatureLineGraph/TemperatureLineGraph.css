@@ -38,7 +38,7 @@
   color: #e3edeb;
   cursor: pointer;
   font-family: Poppins;
-  font-size: 10px;
+  font-size: 1.5rem;
   justify-content: center;
   align-items: center;
   font-weight: 700;
@@ -49,15 +49,14 @@
 }
 
 .pause-btn {
-  padding: 5px 10px;
+  /* border: black solid 10px; */
   width: fit-content;
   text-align: center;
   cursor: pointer;
-  background-color: #f02409;
   color: #e9f5f4;
   cursor: pointer;
   font-family: Poppins;
-  font-size: 10px;
+  font-size: 1.5rem;
   justify-content: center;
   align-items: center;
   font-weight: 700;

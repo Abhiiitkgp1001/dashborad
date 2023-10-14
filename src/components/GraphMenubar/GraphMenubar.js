@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { dataAction } from "../../store";
+import { BsFullscreen, BsFullscreenExit} from "react-icons/bs";
 
 import "./GraphMenubar.css"; // Import your CSS file
 
@@ -42,7 +43,17 @@ const GraphMenuBar = ({ removeBtn, graphId, handle }) => {
         {removeBtn}
       </div>
       <div className="tab" onClick={handle.active ? handle.exit : handle.enter}>
-        {handle.active ? "Exit FullScreen" : "Go Fullscreen"}
+        {handle.active ? (
+          <div>
+            <BsFullscreenExit />
+            {" Exit Fullscreen"}
+          </div>
+        ) : (
+          <div>
+            <BsFullscreen />
+            {" Go Fullscreen"}
+          </div>
+        )}
       </div>
       <div className="tabs">
         <div

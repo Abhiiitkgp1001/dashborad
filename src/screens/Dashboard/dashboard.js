@@ -1,5 +1,5 @@
 import { Layout } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import VITGraph from "../../components/Graphs/Graphs";
@@ -7,11 +7,12 @@ import { dataAction } from "../../store";
 import Customers from "../Boards";
 import VpBoard from "../headerRow";
 import "./dashboard.scss";
+import { BsFillGridFill, BsFillPlusCircleFill, BsList } from "react-icons/bs";
 
 const AddGraphContainer = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: space-around;
   border: 1px solid #ccc;
   margin: 10px auto;
   padding: 10px;
@@ -55,6 +56,7 @@ const Dashboard = () => {
   const [components, setComponents] = useState([]);
   const [count, setCount] = useState(0); // Counter for generating unique keys.
   const dispatch = useDispatch();
+  const [listView, setListView] = useState(false);
 
   const addComponent = () => {
     setComponents((prevComponents) => {
@@ -93,8 +95,9 @@ const Dashboard = () => {
     flexDirection: "column",
     margin: "auto",
   };
-
   // console.log("component before adding any graph ", components);
+
+  useEffect(() => {}, [listView])
   return (
     <AppContainer>
       <Layout>
@@ -102,12 +105,21 @@ const Dashboard = () => {
         <Customers />
         <div>
           <AddGraphContainer>
-            <GreenButton onClick={addComponent}> Add New Graph</GreenButton>
+            <GreenButton onClick={addComponent}> <BsFillPlusCircleFill /> &nbsp; Add New Graph</GreenButton>
+            <GreenButton onClick={() => setListView(true)}>
+              <BsList />
+              &nbsp; List View
+            </GreenButton>
+            <GreenButton onClick={() => setListView(false)}>
+              <BsFillGridFill /> &nbsp; Grid View
+            </GreenButton>
           </AddGraphContainer>
 
           <div id="component-container">
             {components.map((component, index) => (
-              <div key={index}>{component}</div>
+              <div key={index} className={listView ? "chartInList" : "chart"}>
+                {component}
+              </div>
             ))}
           </div>
         </div>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { dataAction } from "../../store";
+import { FaCirclePause, FaCirclePlay } from "react-icons/fa6";
 import ChartLegend from "../ChartLegends/ChartLegend";
 import LineChart from "../LineChart";
 import "./TemperatureLineGraph.css";
@@ -25,6 +26,7 @@ const TemperatureLineChart = ({
   playPause,
   togglePlayPause,
   toggleSeriesVisibility,
+  isInFullScreen,
 }) => {
   const currentBMS = useSelector((state) => state.graphActiveBMSIndex);
   const [activeBMS, setActiveBMS] = useState(
@@ -64,7 +66,11 @@ const TemperatureLineChart = ({
           className={`${!playPause.btn ? "play-btn" : "pause-btn"}`}
           onClick={togglePlayPause}
         >
-          {playPause.btn ? "Pause" : "Play"}
+          {playPause.btn ? (
+              <FaCirclePause />
+          ) : (
+              <FaCirclePlay />              
+          )}
         </div>
 
         <div className="tabs">
@@ -91,6 +97,7 @@ const TemperatureLineChart = ({
             ? ChartData[`bms_${activeBMS.bms}`]
             : []
         }
+        isInFullScreen={isInFullScreen}
       />
       <MemoizedChartLegend
         data={

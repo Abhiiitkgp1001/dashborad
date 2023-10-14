@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { dataAction } from "../../store";
+import { FaCirclePause, FaCirclePlay } from "react-icons/fa6";
 import ChartLegend from "../ChartLegends/ChartLegend";
 import LineChart from "../LineChart";
 import "./currentLineGraph.css";
@@ -65,7 +66,7 @@ const CurrentLineChart = ({
           className={`${!playPause.btn ? "play-btn" : "pause-btn"}`}
           onClick={togglePlayPause}
         >
-          {playPause.btn ? "Pause" : "Play"}
+          {playPause.btn ? <FaCirclePause /> : <FaCirclePlay />}
         </div>
 
         <div className="tabs">

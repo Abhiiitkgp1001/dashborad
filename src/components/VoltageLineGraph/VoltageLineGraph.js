@@ -6,6 +6,9 @@ import { dataAction } from "../../store";
 import ChartLegend from "../ChartLegends/ChartLegend";
 import LineChart from "../LineChart";
 import "./VoltageLineGraph.css";
+import "../VoltageRadialChart.js";
+import { FaCirclePause, FaCirclePlay } from "react-icons/fa6";
+import VoltageRadialChart from "../VoltageRadialChart.js";
 const _ = require("lodash");
 
 const Container = styled.div`
@@ -26,6 +29,7 @@ const VoltageLineChart = ({
   playPause,
   togglePlayPause,
   toggleSeriesVisibility,
+  isInFullScreen,
 }) => {
   const currentBMS = useSelector((state) => state.graphActiveBMSIndex);
   const [activeBMS, setActiveBMS] = useState(
@@ -61,12 +65,14 @@ const VoltageLineChart = ({
   // console.log(chartData);
   return (
     <Container>
-      <div className={`menu-bar }`}>
-        <div
-          className={`${!playPause.btn ? "play-btn" : "pause-btn"}`}
-          onClick={togglePlayPause}
-        >
-          {playPause.btn ? "Pause" : "Play"}
+      <div className={`menu-bar`}>
+        <div style={{display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center"}}>
+          <div
+            className={`${!playPause.btn ? "play-btn" : "pause-btn"}`}
+            onClick={togglePlayPause}
+          >
+            {playPause.btn ? <FaCirclePause /> : <FaCirclePlay />}
+          </div>
         </div>
         <div className="tabs">
           {bms_buttons.map((button) => (
@@ -91,6 +97,7 @@ const VoltageLineChart = ({
             ? ChartData[`bms_${activeBMS.bms}`]
             : []
         }
+        isInFullScreen={isInFullScreen}
       />
       <MemoizedChartLegend
         data={

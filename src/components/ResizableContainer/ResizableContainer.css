@@ -7,6 +7,9 @@
   cursor: auto;
   align-items: flex-start;
 }
+.resizable-container::-webkit-scrollbar {
+  display: none;
+}
 
 .child-component {
   padding: 0px 10px;
