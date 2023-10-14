@@ -1,8 +1,10 @@
 .resizable-container {
   position: relative;
   margin: auto;
-  background-color: #f0f0f0;
-  border: 10px solid #97f0d7;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  background-color: #fff;
+  padding: 10px;
   overflow: scroll; /* Hide overflowing content when resized */
   cursor: auto;
   align-items: flex-start;

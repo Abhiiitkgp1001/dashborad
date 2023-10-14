@@ -14,7 +14,29 @@ const Container = styled.div`
   flex-direction: column;
   padding: 10px auto;
 `;
-
+const MenuContainer = styled.div`
+  display: flex;
+  padding: 8px 16px;
+  background-color: #EEE2DE;
+  border-radius: 6px;
+  font-family: Poppins;
+  font-size: 12px;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  margin-bottom: 12px;
+`;
+const IconContainer = styled.div`
+  padding: 4px;
+  border-radius: 40px;
+  background-color: #fff;
+  color: #000;
+  cursor: pointer;
+  display: flex;
+  &:hover {
+    opacity : 0.75;
+  }
+`;
 const MemoizedLineChart = React.memo(LineChart);
 const MemoizedChartLegend = React.memo(ChartLegend);
 
@@ -61,14 +83,16 @@ const CurrentLineChart = ({
 
   return (
     <Container>
-      <div className={`menu-bar }`}>
-        <div
-          className={`${!playPause.btn ? "play-btn" : "pause-btn"}`}
-          onClick={togglePlayPause}
-        >
-          {playPause.btn ? <FaCirclePause /> : <FaCirclePlay />}
+      <MenuContainer>
+        <div style={{display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center"}}>
+          <div
+            onClick={togglePlayPause}
+          >
+            {playPause.btn ? <IconContainer>
+              <FaCirclePause />
+            </IconContainer> : <IconContainer> <FaCirclePlay /></IconContainer>}
+          </div>
         </div>
-
         <div className="tabs">
           {bms_buttons.map((button) => (
             <div
@@ -76,6 +100,7 @@ const CurrentLineChart = ({
               className={` tab ${
                 button === activeBMS.bms ? "active" : "inactive"
               }`}
+              
               onClick={() =>
                 setActiveBMS({ id: graphId + "_" + graphTab, bms: button })
               }
@@ -84,7 +109,7 @@ const CurrentLineChart = ({
             </div>
           ))}
         </div>
-      </div>
+      </MenuContainer>
       <MemoizedLineChart
         data={
           ChartData[`bms_${activeBMS.bms}`]

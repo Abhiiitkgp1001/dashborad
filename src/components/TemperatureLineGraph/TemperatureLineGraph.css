@@ -1,6 +1,7 @@
 .tabs {
   display: flex;
   gap: 10px;
+  flex-direction: row;
 }
 .tab {
   cursor: pointer;
@@ -8,27 +9,22 @@
   border: 1px solid #fff;
   border-radius: 5px;
   &:hover {
-    color: #c9f7f5;
-    background-color: #1bc5bd;
+    color: #fff;
+    background-color: #F7D060;
   }
 }
 
 .active {
-  background-color: #d3f2eb;
-  color: #075140;
+  background-color: #321E1E;
+  color: #fff;
   &:hover {
-    color: #c9f7f5;
-    background-color: #1bc5bd;
+    opacity: 0.75;
   }
 }
 
 .inactive {
-  &:hover {
-    color: #c9f7f5;
-    background-color: #1bc5bd;
-  }
+ 
 }
-
 .play-btn {
   padding: 5px 10px;
   width: fit-content;

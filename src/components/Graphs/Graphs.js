@@ -66,6 +66,23 @@ const GreenButton = styled.div`
     background-color: #1bc5bd;
   }
 `;
+const CloseButton = styled.div`
+  margin-top: auto;
+  display: flex;
+  padding: 4px;
+  background-color: #C51605;
+  border-radius: 60px;
+  color: #fff;
+  cursor: pointer;
+  font-family: Poppins;
+  font-size: 12px;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  &:hover {
+    opacity : 0.75;
+  }
+`;
 
 const VTIGraph = ({ graphId, componentKey, onRemove }) => {
   const time = useSelector((state) => state.timestamp); //timestamp
@@ -282,7 +299,7 @@ const VTIGraph = ({ graphId, componentKey, onRemove }) => {
       btn: !playPause.btn,
     });
   };
-  const removeBtn = <GreenButton onClick={onRemove}><FaXmark /></GreenButton>;
+  const removeBtn = <CloseButton  onClick={onRemove}><FaXmark /></CloseButton>;
   //full screen logic
   const handle = useFullScreenHandle();
   console.log("handle:  ", handle.active);

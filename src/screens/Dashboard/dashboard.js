@@ -13,19 +13,24 @@ const AddGraphContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  border: 1px solid #ccc;
   margin: 10px auto;
   padding: 10px;
   width: 80vw;
+  background-color: #fff;
+  border-radius: 12px;
 `;
-
+const SizedBox = styled.div`
+    display: flex;
+    flex-direction: column;
+    height:16px;  
+`;
 const GreenButton = styled.div`
   margin-top: auto;
   display: flex;
   padding: 8px 16px;
   background-color: #c9f7f5;
   border-radius: 6px;
-  color: #1bc5bd;
+  color: #000;
   cursor: pointer;
   font-family: Poppins;
   font-size: 12px;
@@ -33,8 +38,9 @@ const GreenButton = styled.div`
   align-items: center;
   font-weight: 700;
   &:hover {
-    color: #c9f7f5;
-    background-color: #1bc5bd;
+    color: #fff;
+    background-color: #774360;
+    opacity: 0.75;
   }
 `;
 
@@ -106,15 +112,21 @@ const Dashboard = () => {
         <div>
           <AddGraphContainer>
             <GreenButton onClick={addComponent}> <BsFillPlusCircleFill /> &nbsp; Add New Graph</GreenButton>
-            <GreenButton onClick={() => setListView(true)}>
+            <GreenButton style={{
+              color: listView? "#fff" :"#000",
+              backgroundColor: listView? "#774360" :"#c9f7f5",
+            }} onClick={() => setListView(true)}>
               <BsList />
               &nbsp; List View
             </GreenButton>
-            <GreenButton onClick={() => setListView(false)}>
+            <GreenButton style={{
+              color: !listView? "#fff" :"#000",
+              backgroundColor: !listView? "#774360" :"#c9f7f5",
+            }} onClick={() => setListView(false)}>
               <BsFillGridFill /> &nbsp; Grid View
             </GreenButton>
           </AddGraphContainer>
-
+          <SizedBox/>
           <div id="component-container">
             {components.map((component, index) => (
               <div key={index} className={listView ? "chartInList" : "chart"}>

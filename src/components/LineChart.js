@@ -44,12 +44,13 @@ function LineChart({ data, isInFullScreen }) {
         text: "Time",
       },
       labels: {
-        datetimeFormatter: {
-          year: "yyyy",
-          month: "MMM 'yy",
-          day: "dd MMM",
-          hour: "HH:mm",
-        },
+        format: 'dd/MM/yy HH:mm:ss',
+        // datetimeFormatter: {
+        //   year: "yyyy",
+        //   month: "MMM 'yy",
+        //   day: "dd MMM",
+        //   hour: "HH:mm",
+        // },
       },
       // tickAmount: 10, // Adjust this number to control the number of x-axis ticks
     },

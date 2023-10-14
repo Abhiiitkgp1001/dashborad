@@ -2,9 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { dataAction } from "../../store";
 import { BsFullscreen, BsFullscreenExit} from "react-icons/bs";
+import styled from "styled-components";
 
 import "./GraphMenubar.css"; // Import your CSS file
-
+const IconSpaceContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+`;
 const GraphMenuBar = ({ removeBtn, graphId, handle }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const graphActiveTab = useSelector((state) => state.graphActiveTab);
@@ -44,15 +50,15 @@ const GraphMenuBar = ({ removeBtn, graphId, handle }) => {
       </div>
       <div className="tab" onClick={handle.active ? handle.exit : handle.enter}>
         {handle.active ? (
-          <div>
+          <IconSpaceContainer>
             <BsFullscreenExit />
             {" Exit Fullscreen"}
-          </div>
+          </IconSpaceContainer>
         ) : (
-          <div>
+          <IconSpaceContainer>
             <BsFullscreen />
             {" Go Fullscreen"}
-          </div>
+          </IconSpaceContainer>
         )}
       </div>
       <div className="tabs">

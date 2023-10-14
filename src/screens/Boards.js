@@ -6,6 +6,7 @@ import styled from "styled-components";
 import VoltageRadialChart from "../components/VoltageRadialChart";
 import Heading from "../components/heading";
 import TempRadialChart from "../components/tempRadialChart";
+import SmallOne from "../components/smallOne";
 
 const Container = styled.div`
   display: flex;
@@ -79,8 +80,17 @@ const GreenButton = styled.div`
 
 const HeadingRow = styled.div`
   display: flex;
+  gap: 12px;
   flex-direction: row;
   justify-content: space-between;
+`;
+
+const RadialGraphRow = styled.div`
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  flex-direction: row;
+  justify-content: space-around;
 `;
 
 const Customers = () => {
@@ -301,13 +311,26 @@ const Customers = () => {
     <Container>
       <HeadingRow>
         <Heading children="Dynamic data" />
+        <HeadingRow>
         <GreenButton onClick={handleToggleClick}>
           {isRecording ? 'Stop Rec' : 'Start Rec'}
         </GreenButton>
         <GreenButton onClick={() => exportData(1)}>Export Rec</GreenButton>
         <GreenButton onClick={() => exportData(0)}>Export Session</GreenButton>
+        </HeadingRow>
       </HeadingRow>
+      <SizedBox/>
+      <RadialGraphRow>
+        
+        <SmallOne>
+          Voltage
+        </SmallOne>
+        <SmallOne>
+          Temperature
+        </SmallOne>
+      </RadialGraphRow>
       <HeadingRow>
+        
         <VoltageRadialChart index={showGraph} graphData={voltage} />
         <TempRadialChart index2={showGraph} graphData2={temp} />
       </HeadingRow>

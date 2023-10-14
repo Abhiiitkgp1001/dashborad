@@ -16,7 +16,29 @@ const Container = styled.div`
   flex-direction: column;
   padding: 0px auto;
 `;
-
+const MenuContainer = styled.div`
+  display: flex;
+  padding: 8px 16px;
+  background-color: #EEE2DE;
+  border-radius: 6px;
+  font-family: Poppins;
+  font-size: 12px;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  margin-bottom: 12px;
+`;
+const IconContainer = styled.div`
+  padding: 4px;
+  border-radius: 40px;
+  background-color: #fff;
+  color: #000;
+  cursor: pointer;
+  display: flex;
+  &:hover {
+    opacity : 0.75;
+  }
+`;
 const MemoizedLineChart = React.memo(LineChart);
 const MemoizedChartLegend = React.memo(ChartLegend);
 
@@ -65,13 +87,14 @@ const VoltageLineChart = ({
   // console.log(chartData);
   return (
     <Container>
-      <div className={`menu-bar`}>
+      <MenuContainer>
         <div style={{display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center"}}>
           <div
-            className={`${!playPause.btn ? "play-btn" : "pause-btn"}`}
             onClick={togglePlayPause}
           >
-            {playPause.btn ? <FaCirclePause /> : <FaCirclePlay />}
+            {playPause.btn ? <IconContainer>
+              <FaCirclePause />
+            </IconContainer> : <IconContainer> <FaCirclePlay /></IconContainer>}
           </div>
         </div>
         <div className="tabs">
@@ -81,6 +104,7 @@ const VoltageLineChart = ({
               className={` tab ${
                 button === activeBMS.bms ? "active" : "inactive"
               }`}
+              
               onClick={() =>
                 setActiveBMS({ id: graphId + "_" + graphTab, bms: button })
               }
@@ -89,7 +113,7 @@ const VoltageLineChart = ({
             </div>
           ))}
         </div>
-      </div>
+      </MenuContainer>
       {/* <FullScreen handle={handle}> */}
       <MemoizedLineChart
         data={
