@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 
 const Chart = styled.div`
-    height : 500px;
+    height : 400px;
     flex: 1;
     font-family: Poppins;
     font-weight : 700;
