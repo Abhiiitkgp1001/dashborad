@@ -48,6 +48,7 @@ const CurrentLineChart = ({
   selectedBmsIndex,
   playPause,
   togglePlayPause,
+  isInFullScreen,
   toggleSeriesVisibility,
 }) => {
   const currentBMS = useSelector((state) => state.graphActiveBMSIndex);
@@ -116,6 +117,7 @@ const CurrentLineChart = ({
             ? ChartData[`bms_${activeBMS.bms}`]
             : []
         }
+        isInFullScreen={isInFullScreen}
       />
       <MemoizedChartLegend
         data={
