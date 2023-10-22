@@ -7,7 +7,11 @@ import styled from "styled-components";
 import Heading from "../components/heading";
 import SmallOne from "../components/smallOne";
 import SmallTwo from "../components/smallTwo";
-import { dataAction } from "../store";
+import store, { dataAction } from "../store";
+import axios from 'axios';
+import { create_session } from "../apis/post/create_session";
+import { convertDate } from "../helpers/utils";
+import { send_data } from "../apis/post/send_data";
 
 const Container = styled.div`
   display: flex;
@@ -90,12 +94,20 @@ const HeaderRow = () => {
   const cells = useSelector((state) => state.cells);
   const deviceConnected = useSelector((state) => state.deviceConnected);
   const consoleArray = useSelector((state) => state.consoleArray);
+  const voltage = useSelector((state) => state.voltage);
+  const temp = useSelector((state) => state.voltage);
+  const current = useSelector((state) => state.voltage);
+  const timestamp = useSelector((state) => state.voltage);
+  const bms_cells_voltage = useSelector((state) => state.bms_cells_voltage);
+  const bms_temp = useSelector((state) => state.bms_temp);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const consoleFullScreen = useFullScreenHandle();
   const [playConsole, setPlayConsole] = useState(true);
   const [showConsole, setShowConsole] = useState([]);
-  useEffect(() => {
+
+
+  useEffect( () => {
     if (deviceConnected === true) {
       dispatch(dataAction.setBMS());
       dispatch(dataAction.setCells());
@@ -103,12 +115,14 @@ const HeaderRow = () => {
       dispatch(dataAction.setTemp(8));
       dispatch(dataAction.setCurrent(78));
       dispatch(dataAction.setTimeStamp());
+      setTimeout(make_session,1000);
     }
   }, [deviceConnected]);
 
   useEffect(() => {
     if (deviceConnected === true) {
       const interval = setInterval(() => {
+
         dispatch(dataAction.setVoltage(27));
         dispatch(dataAction.setTemp(8));
         dispatch(dataAction.setCurrent(78));
@@ -127,7 +141,92 @@ const HeaderRow = () => {
     }
   }, [playConsole,consoleArray])
   
+  const make_session =  async () => {
+    const session_name = "Session - "+convertDate(store.getState().timestamp[0]);
+    
+    var data = {
+      no_of_bms: parseInt(store.getState().bms.toString()),
+      no_of_cells: store.getState().bms_cells_voltage,
+      bms_names: store.getState().bms_cells_voltage.map((item,index)=>`BMS${index}`),
+      no_of_temp: store.getState().bms_temp,
+      start_time: convertDate(store.getState().timestamp[0]),
+      session_name: session_name
+    };
+    console.log(data);
+    const response = await create_session(data);
+    if(response.status == 200){
+      const res_data = response.data;
+      dispatch(dataAction.setSessionId(res_data.session_id));
+      dispatch(dataAction.setBMSIds(res_data.bms_ids));
+      dispatch(dataAction.setSessionName(session_name));
+      save_data();
+    }
+  }
+  const save_data = async () => {
+    const datainterval = setInterval(async () => {
+      let structured_data = {};
+      structured_data["session_id"] = store.getState().session_id;
+      structured_data["no_of_bms"] = store.getState().bms;
+      structured_data["session_name"] = store.getState().session_name;
+      structured_data["start_time"] = convertDate(store.getState().timestamp[0]);
+      structured_data["end_time"] = convertDate(store.getState().timestamp[store.getState().timestamp.length-1]);
+      let bms_arr = [];
+      let end_index = store.getState().current.length;
+      for(let i=0;i<store.getState().bms;i++){
+        let bms_obj = {};
+        bms_obj['bms_id'] = store.getState().bms_ids[i];
+        let vol_arr = [];
+        for(let j=store.getState().data_sent_index;j<end_index;j++){
+          let cur_vol_data = store.getState().voltage[`bms ${i}`][j];
+          let filtered_vol_data = [];
+          for(let k=0;k<cur_vol_data.length;k++){
+            if(cur_vol_data[k]!=undefined) filtered_vol_data.push(cur_vol_data[k]);
+          }
+          vol_arr.push({
+            data: filtered_vol_data,
+            timestamp : convertDate(store.getState().timestamp[j])
+          });
+        }
 
+        let temp_arr = [];
+        for(let j=store.getState().data_sent_index;j<end_index;j++){
+          let cur_temp_data = store.getState().temp[`bms ${i}`][j];
+          let filtered_temp_data = [];
+          for(let k=0;k<cur_temp_data.length;k++){
+            if(cur_temp_data[k]!=undefined) filtered_temp_data.push(cur_temp_data[k]);
+          }
+          temp_arr.push({
+            data: filtered_temp_data,
+            timestamp : convertDate(store.getState().timestamp[j])
+          });
+        }
+
+        let current_arr = [];
+        for(let j=store.getState().data_sent_index;j<end_index;j++){
+          
+          current_arr.push({
+            data: store.getState().current[j],
+            timestamp : convertDate(store.getState().timestamp[j])
+          });
+        }
+        bms_obj['voltage'] = vol_arr;
+        bms_obj['temp'] = temp_arr;
+        bms_obj['current'] = current_arr;
+        bms_arr.push(bms_obj)
+      }
+      structured_data["bms"] =bms_arr;
+      console.log(structured_data)
+      const response = await send_data(structured_data);
+      if(response.status == 200){
+        console.log(response.data);
+        dispatch(dataAction.setDataSentIndex(end_index));
+      }
+    }, 60000);
+
+    return () => {
+      clearInterval(datainterval);
+    };
+  }
 
   async function read() {
     try {
@@ -292,13 +391,14 @@ const HeaderRow = () => {
     return;
   }
 
+  
   return (
     <Container>
       <Header>
         <Heading children="Dashboard - BMS" />
         <Header>
           <GreenButton
-            onClick={() => {
+            onClick={async () => {
               // read();
               dispatch(dataAction.setDeviceConnected(true));
             }}

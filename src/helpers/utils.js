@@ -63,3 +63,10 @@ export function standardDeviation(arr) {
         (arr.length)
     );
 };
+
+export function convertDate(date){
+
+    const seconds = date / 1000;
+    const dt = new Date(seconds * 1000).toISOString(); 
+    return dt;
+}

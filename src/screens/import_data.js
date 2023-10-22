@@ -1,10 +1,14 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import Heading from '../components/heading';
 import { read, utils} from 'xlsx';
 import AreaChart from '../components/AreaChart';
 import { mean, median, standardDeviation } from '../helpers/utils';
 import SmallOne from '../components/smallOne';
+import { Modal, Spin } from 'antd';
+import { get_all_session } from '../apis/get/get_all_sessions';
+import { get_session_data } from '../apis/get/get_session_data';
+import BarChart from '../components/BarChart';
 const colors = ['#272829','#435334','#2E3840'];
 const max = 2;
 const min = 0;
@@ -49,6 +53,10 @@ const FeatureContainer = styled.div`
 const SizedBox = styled.div`
     display: flex;
     height: 32px;
+`;
+const SizedBoxW = styled.div`
+    display: flex;
+    width: 12px;
 `;
 const SizedBox2 = styled.div`
     display: flex;
@@ -119,6 +127,18 @@ width: 100%;
   display: none;
 }
 `;
+const SessionsContainer = styled.div`
+display: flex;
+max-height: 400px;
+flex-direction: column;
+overflow-y: scroll;
+gap: 16px;
+padding-top: 12px;
+.noscrollbar::-webkit-scrollbar {
+  display: none;
+}
+`;
+
 const ImportData = () => {
     const [bms_data, setBMSData] = useState({});
     const [bms_active, setBMSActive] = useState(-1);
@@ -126,6 +146,23 @@ const ImportData = () => {
     const [data_mean, setDataMean] = useState([]);
     const [data_median, setDataMedian] = useState([]);
     const [data_std, setDataStd] = useState([]);
+    const [allSessions, setAllSessions] = useState([]);
+    const [isOpen, setIsOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [spining, setSpining] = useState(false);
+    const [bms_data_bar_graph, setBMSDataBarGraph] = useState({});
+    useEffect( () => {
+      get_sessions();
+    }, [])
+    
+    const get_sessions  = async()=>{
+      const response = await get_all_session();
+      if(response.status == 200){
+        console.log(response.data);
+        setIsLoading(false);
+        setAllSessions(response.data);
+      }
+    }
 
     const handleImport = ($event) => {
         const files = $event.target.files;
@@ -181,44 +218,8 @@ const ImportData = () => {
                      console.log(parsedData);
                     setBMSData(parsedData);
                     setBMSGraphs(graphs);
-
-                    let overall_data_means = {};
-                    let overall_data_medians = {};
-                    let overall_data_stds = {};
-                    for(let key in parsedData){
-                        let data_means = [];
-                        let data_medians = [];
-                        let data_stds = [];
-                        for(let i in parsedData[key].data){
-                            if(i!="Timestamp"){
-                              let cur_mean = Math.round(mean([...parsedData[key].data[i]])*100)/100;
-                            data_means.push({
-                                name: i,
-                                value : cur_mean
-                            })
-                            let cur_median = Math.round(median([...parsedData[key].data[i]])*100)/100;
-                            data_medians.push({
-                                name: i,
-                                value : cur_median
-                            })
-                            let cur_mode = Math.round(standardDeviation([...parsedData[key].data[i]])*100)/100;
-                            data_stds.push({
-                                name: i,
-                                value : cur_mode
-                            })
-                            }
-                        }
-                        overall_data_means[key] = data_means;
-                        overall_data_medians[key] = data_medians;
-                        overall_data_stds[key] = data_stds;
-                    }
-                    // console.log(overall_data_means);
-                    // console.log(overall_data_medians);
-                    // console.log(overall_data_stds);
-                    setDataMean(overall_data_means);
-                    setDataMedian(overall_data_medians);
-                    setDataStd(overall_data_stds);
-
+                    insightsData(parsedData);
+                    
                 }
             }
             reader.readAsArrayBuffer(file);
@@ -238,17 +239,166 @@ const ImportData = () => {
         changed_bms_graph[`BMS ${bms_active}`][index]["legend"][item].visible = !changed_bms_graph[`BMS ${bms_active}`][index]["legend"][item].visible;
         setBMSGraphs(changed_bms_graph);
     }
+    const changeLegendVisiblityBarGraph = (item)=>{
+      let changed_graph = {...bms_data_bar_graph};
+      changed_graph[`BMS ${bms_active}`]["legend"][item].visible = !changed_graph[`BMS ${bms_active}`]["legend"][item].visible;
+      setBMSDataBarGraph(changed_graph);
+  }
     const addGraphs = ()=>{
         let add_graph_current_selected_bms = {...bms_graphs};
         let new_item = JSON.parse(JSON.stringify(bms_data[`BMS ${bms_active}`]));;
         add_graph_current_selected_bms[`BMS ${bms_active}`].push(new_item)
         setBMSGraphs(add_graph_current_selected_bms);
     }
+
+    const convertData = (cloudData)=>{
+      var parsedData = {};
+      var graph ={};
+      for(let i=0;i<cloudData.bms.length;i++){
+        let c_data = {};
+        let c_legend = {};
+        let obj = cloudData.bms[i];
+
+        let vol_data = obj.voltage;
+        for(let j=0;j<vol_data.length;j++){
+          let vol_obj = vol_data[j].data;
+          let vol_arr = [];
+          for(let k=0;k<vol_obj.length;k++){
+            vol_arr.push(vol_obj[k].value);
+          }
+          c_data[vol_data[j].cell_name]=vol_arr;
+          c_legend[vol_data[j].cell_name] = {
+            name: vol_data[j].cell_name,
+            visible: false,
+          }
+        }
+
+        let temp_data = obj.temp;
+        for(let j=0;j<temp_data.length;j++){
+          let temp_obj = temp_data[j].data;
+          let temp_arr = [];
+          let timeStamp = [];
+          for(let k=0;k<temp_obj.length;k++){
+            temp_arr.push(temp_obj[k].value);
+
+            var date = temp_obj[k].timeStamp.toString().slice();
+            let formattedDate = date.slice().substring(0,10).replaceAll("-","/");
+            let formattedTime = date.slice().substring(11);
+            formattedTime = formattedTime.substring(0,8);
+            timeStamp.push(formattedDate+" "+formattedTime);
+          }
+          
+          c_data["Timestamp"] = timeStamp;
+
+          c_data[temp_data[j].temp_name]=temp_arr;
+          c_legend[temp_data[j].temp_name] = {
+            name: temp_data[j].temp_name,
+            visible: false,
+          }
+        }
+
+        let current_data = obj.current;
+        for(let j=0;j<current_data.length;j++){
+          let current_obj = current_data[j].data;
+          let current_arr = [];
+          for(let k=0;k<current_obj.length;k++){
+            current_arr.push(current_obj[k].value);
+          }
+          c_data["Current"]=current_arr;
+          c_legend["Current"] = {
+            name: "Current",
+            visible: false,
+          }
+        }
+        parsedData[`BMS ${i}`] = {
+          data: c_data,
+          legend: c_legend,
+        }
+        graph[`BMS ${i}`] =[];
+      }
+      console.log(parsedData);
+      setBMSData(parsedData);
+      setBMSGraphs(graph);
+      insightsData(parsedData);
+    }
+  const insightsData = (parsedData)=>{
+    let overall_data_means = {};
+    let overall_data_medians = {};
+    let overall_data_stds = {};
+    let bar_graph_data = {};
+    for(let key in parsedData){
+        let data_means = [];
+        let data_medians = [];
+        let data_stds = [];
+        let legends = {};
+        for(let i in parsedData[key].data){
+            if(i!="Timestamp"){
+              let cur_mean = Math.round(mean([...parsedData[key].data[i]])*100)/100;
+            data_means.push({
+                name: i,
+                value : cur_mean
+            })
+            let cur_median = Math.round(median([...parsedData[key].data[i]])*100)/100;
+            data_medians.push({
+                name: i,
+                value : cur_median
+            })
+            let cur_mode = Math.round(standardDeviation([...parsedData[key].data[i]])*100)/100;
+            data_stds.push({
+                name: i,
+                value : cur_mode
+            })
+            legends[i] = {
+              name: i,
+              visible: true,
+            };
+            }
+        }
+        overall_data_means[key] = data_means;
+        overall_data_medians[key] = data_medians;
+        overall_data_stds[key] = data_stds;
+        bar_graph_data[key]=bar_graph_data[key]||{};
+        bar_graph_data[key].mean = data_means;
+        bar_graph_data[key].median = data_medians;
+        bar_graph_data[key].std = data_stds;
+        bar_graph_data[key].legend = legends;
+    }
+    setDataMean(overall_data_means);
+    setDataMedian(overall_data_medians);
+    setDataStd(overall_data_stds);
+    console.log(bar_graph_data);
+    setBMSDataBarGraph(bar_graph_data);
+  }
   return (
     <Container>
         <Header>
             <Heading children="Analysis Past Data"/>
+            
             <Header>
+            <div style={{marginBottom: '8px'}}>
+              <GreenButton onClick={()=> setIsOpen(true)}>Fetch Past Sessions</GreenButton>
+              <Modal title="Select Session" open={isOpen} footer="" onOk={()=>{}} onCancel= {spining?()=>{}: ()=>setIsOpen(false)}>
+                <Spin spinning={spining} >
+                <SessionsContainer className='noscroll'>
+                {
+                  allSessions.map((item,index)=>(
+                    <GreenButton key={index} onClick={async ()=>{
+                      setSpining(true);
+                      const response = await get_session_data(item._id);
+                      if(response.status==200){
+                        setSpining(false);
+                        setIsOpen(false);
+                        console.log(response.data);
+                        convertData(response.data);
+                      }
+                    }}>{item.session_name}</GreenButton>
+                  ))
+                }
+                </SessionsContainer>
+                </Spin>
+              </Modal>
+            </div>
+            <SizedBoxW/>
             <FileInput
                 type="file"
                 name="file"
@@ -276,7 +426,13 @@ const ImportData = () => {
             </RowContainer>
             {bms_active!=-1 && <GreenButton onClick={()=>addGraphs()}>Add Graph +</GreenButton>}
         </Header>
-        { bms_active!=-1 && <div>
+        {bms_active!=-1 && <div>
+          <SizedBox/>
+          <BarChart data={bms_data_bar_graph[`BMS ${bms_active}`]} bms_active={bms_active} changeLegendVisiblityBarGraph={changeLegendVisiblityBarGraph}/>
+          </div>}
+        {/* { bms_active!=-1 && <div>
+          <SizedBox/>
+          <BarChart data={bms_data_bar_graph[`BMS ${bms_active}`]} bms_active={bms_active} changeLegendVisiblityBarGraph={changeLegendVisiblityBarGraph}/>
         <SizedBox/>
           <SmallOne>Mean</SmallOne>
           <CalcOuterContainer className='noscroll'>
@@ -314,7 +470,7 @@ const ImportData = () => {
             }
           </CalcOuterContainer>
         </div>}
-        <SizedBox/>
+        <SizedBox/> */}
         {   bms_active !=-1&&
             <ColContainer>
                 {

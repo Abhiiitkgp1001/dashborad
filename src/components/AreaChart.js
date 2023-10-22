@@ -233,6 +233,7 @@ const AreaChart = (props) => {
             onClick={()=>{
               props.changeLegendVisiblity(item,props.index)
             }}
+            key={index}
             >{props.data.legend[item].name}</FeatureContainer>})
           }
           </LegendContainer>

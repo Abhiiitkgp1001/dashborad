@@ -1,8 +1,14 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
+  session_id: null,
+  session_name: null,
+  bms_ids: [],
   bms: 0,
+  data_sent_index:0,
   cells: 0,
+  bms_cells_voltage: [],
+  bms_temp: [],
   current: [],
   voltage: {},
   temp: {},
@@ -21,8 +27,20 @@ const dataSlice = createSlice({
   name: "bms",
   initialState: initialState,
   reducers: {
+    setSessionId: (state, action) => {
+      state.session_id = action.payload;
+    },
+    setSessionName: (state, action) => {
+      state.session_name = action.payload;
+    },
+    setBMSIds: (state, action) => {
+      state.bms_ids = action.payload;
+    },
     setDeviceConnected: (state, action) => {
       state.deviceConnected = action.payload;
+    },
+    setDataSentIndex: (state,action) => {
+      state.data_sent_index = action.payload;
     },
     setBMS: (state, action) => {
       // var data = action.payload;
@@ -34,7 +52,7 @@ const dataSlice = createSlice({
     },
     setCells: (state, action) => {
       // var data = action.payload;
-      var data = "B=20;";
+      var data = "B=21;";
       var slicedData = data.substring(2).replace(";", "");
       state.consoleArray.push(data);
       state.cells = slicedData;
@@ -44,8 +62,9 @@ const dataSlice = createSlice({
       // var data = action.payload;
       var slicedData = data.substring(2).replace(";", "");
       state.consoleArray.push(data);
-
+      
       state.current.push(slicedData);
+      
     },
     setVoltage: (state, action) => {
       var data =
@@ -61,22 +80,29 @@ const dataSlice = createSlice({
       var vol = Array.from({ length: num_bms }, () =>
         Array(16).fill(undefined)
       );
-
+      
+      let no = [];
       for (var i = 0; i < num_bms; i++) {
+        let cnt = 0;
         for (var j = 0; j < 16; j++) {
-          if (16 * i + j < slicedData.length)
+          if (16 * i + j < slicedData.length){
+            cnt++;
             // vol[i][j] = parseFloat(slicedData[16*i+j].split(',')[1]);
             vol[i][j] = Math.round(Math.random() * 1000) / 100;
+          }
         }
+        no[i] = cnt;
       }
       var obj = { ...state.voltage };
-
+      
       for (var i = 0; i < num_bms; i++) {
         if (!Object.keys(obj).includes(`bms ${i}`)) obj[`bms ${i}`] = [];
         obj[`bms ${i}`].push(vol[i]);
       }
       // console.log(obj);
+      // console.log(no);
       state.voltage = obj;
+      state.bms_cells_voltage = no;
     },
     setTemp: (state, action) => {
       var data = "T=0,1;1,2;2,4;3,8;4,2;5,6;6,2;7,2;";
@@ -92,21 +118,28 @@ const dataSlice = createSlice({
       var temp = Array.from({ length: num_bms }, () =>
         Array(5).fill(undefined)
       );
-
+      let no = [];
       for (var i = 0; i < num_bms; i++) {
+        let cnt = 0;
         for (var j = 0; j < 5; j++) {
-          if (5 * i + j < slicedData.length)
+          if (5 * i + j < slicedData.length){
+            cnt++;
             // temp[i][j] = parseFloat(slicedData[5*i+j].split(',')[1]);
             temp[i][j] = Math.round(Math.random() * 1000) / 100;
+          }
+          
         }
+        no[i] = cnt;
       }
       var obj = { ...state.temp };
-
+      
       for (var i = 0; i < num_bms; i++) {
         if (!Object.keys(obj).includes(`bms ${i}`)) obj[`bms ${i}`] = [];
         obj[`bms ${i}`].push(temp[i]);
       }
       state.temp = obj;
+      state.bms_temp = no;
+      // console.log(no);
     },
     setTempChartData: (state, action) => {
       var data = action.payload;
