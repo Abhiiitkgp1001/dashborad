@@ -8,6 +8,7 @@ import SmallOne from '../components/smallOne';
 import { Modal, Spin } from 'antd';
 import { get_all_session } from '../apis/get/get_all_sessions';
 import { get_session_data } from '../apis/get/get_session_data';
+import BarChart from '../components/BarChart';
 const colors = ['#272829','#435334','#2E3840'];
 const max = 2;
 const min = 0;
@@ -149,6 +150,7 @@ const ImportData = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [spining, setSpining] = useState(false);
+    const [bms_data_bar_graph, setBMSDataBarGraph] = useState({});
     useEffect( () => {
       get_sessions();
     }, [])
@@ -216,41 +218,8 @@ const ImportData = () => {
                      console.log(parsedData);
                     setBMSData(parsedData);
                     setBMSGraphs(graphs);
-
-                    let overall_data_means = {};
-                    let overall_data_medians = {};
-                    let overall_data_stds = {};
-                    for(let key in parsedData){
-                        let data_means = [];
-                        let data_medians = [];
-                        let data_stds = [];
-                        for(let i in parsedData[key].data){
-                            if(i!="Timestamp"){
-                              let cur_mean = Math.round(mean([...parsedData[key].data[i]])*100)/100;
-                            data_means.push({
-                                name: i,
-                                value : cur_mean
-                            })
-                            let cur_median = Math.round(median([...parsedData[key].data[i]])*100)/100;
-                            data_medians.push({
-                                name: i,
-                                value : cur_median
-                            })
-                            let cur_mode = Math.round(standardDeviation([...parsedData[key].data[i]])*100)/100;
-                            data_stds.push({
-                                name: i,
-                                value : cur_mode
-                            })
-                            }
-                        }
-                        overall_data_means[key] = data_means;
-                        overall_data_medians[key] = data_medians;
-                        overall_data_stds[key] = data_stds;
-                    }
-                    setDataMean(overall_data_means);
-                    setDataMedian(overall_data_medians);
-                    setDataStd(overall_data_stds);
-
+                    insightsData(parsedData);
+                    
                 }
             }
             reader.readAsArrayBuffer(file);
@@ -270,6 +239,11 @@ const ImportData = () => {
         changed_bms_graph[`BMS ${bms_active}`][index]["legend"][item].visible = !changed_bms_graph[`BMS ${bms_active}`][index]["legend"][item].visible;
         setBMSGraphs(changed_bms_graph);
     }
+    const changeLegendVisiblityBarGraph = (item)=>{
+      let changed_graph = {...bms_data_bar_graph};
+      changed_graph[`BMS ${bms_active}`]["legend"][item].visible = !changed_graph[`BMS ${bms_active}`]["legend"][item].visible;
+      setBMSDataBarGraph(changed_graph);
+  }
     const addGraphs = ()=>{
         let add_graph_current_selected_bms = {...bms_graphs};
         let new_item = JSON.parse(JSON.stringify(bms_data[`BMS ${bms_active}`]));;
@@ -345,41 +319,56 @@ const ImportData = () => {
       console.log(parsedData);
       setBMSData(parsedData);
       setBMSGraphs(graph);
-      let overall_data_means = {};
-      let overall_data_medians = {};
-      let overall_data_stds = {};
-      for(let key in parsedData){
-          let data_means = [];
-          let data_medians = [];
-          let data_stds = [];
-          for(let i in parsedData[key].data){
-              if(i!="Timestamp"){
-                let cur_mean = Math.round(mean([...parsedData[key].data[i]])*100)/100;
-              data_means.push({
-                  name: i,
-                  value : cur_mean
-              })
-              let cur_median = Math.round(median([...parsedData[key].data[i]])*100)/100;
-              data_medians.push({
-                  name: i,
-                  value : cur_median
-              })
-              let cur_mode = Math.round(standardDeviation([...parsedData[key].data[i]])*100)/100;
-              data_stds.push({
-                  name: i,
-                  value : cur_mode
-              })
-              }
-          }
-          overall_data_means[key] = data_means;
-          overall_data_medians[key] = data_medians;
-          overall_data_stds[key] = data_stds;
-      }
-      setDataMean(overall_data_means);
-      setDataMedian(overall_data_medians);
-      setDataStd(overall_data_stds);
+      insightsData(parsedData);
     }
-
+  const insightsData = (parsedData)=>{
+    let overall_data_means = {};
+    let overall_data_medians = {};
+    let overall_data_stds = {};
+    let bar_graph_data = {};
+    for(let key in parsedData){
+        let data_means = [];
+        let data_medians = [];
+        let data_stds = [];
+        let legends = {};
+        for(let i in parsedData[key].data){
+            if(i!="Timestamp"){
+              let cur_mean = Math.round(mean([...parsedData[key].data[i]])*100)/100;
+            data_means.push({
+                name: i,
+                value : cur_mean
+            })
+            let cur_median = Math.round(median([...parsedData[key].data[i]])*100)/100;
+            data_medians.push({
+                name: i,
+                value : cur_median
+            })
+            let cur_mode = Math.round(standardDeviation([...parsedData[key].data[i]])*100)/100;
+            data_stds.push({
+                name: i,
+                value : cur_mode
+            })
+            legends[i] = {
+              name: i,
+              visible: true,
+            };
+            }
+        }
+        overall_data_means[key] = data_means;
+        overall_data_medians[key] = data_medians;
+        overall_data_stds[key] = data_stds;
+        bar_graph_data[key]=bar_graph_data[key]||{};
+        bar_graph_data[key].mean = data_means;
+        bar_graph_data[key].median = data_medians;
+        bar_graph_data[key].std = data_stds;
+        bar_graph_data[key].legend = legends;
+    }
+    setDataMean(overall_data_means);
+    setDataMedian(overall_data_medians);
+    setDataStd(overall_data_stds);
+    console.log(bar_graph_data);
+    setBMSDataBarGraph(bar_graph_data);
+  }
   return (
     <Container>
         <Header>
@@ -437,7 +426,13 @@ const ImportData = () => {
             </RowContainer>
             {bms_active!=-1 && <GreenButton onClick={()=>addGraphs()}>Add Graph +</GreenButton>}
         </Header>
-        { bms_active!=-1 && <div>
+        {bms_active!=-1 && <div>
+          <SizedBox/>
+          <BarChart data={bms_data_bar_graph[`BMS ${bms_active}`]} bms_active={bms_active} changeLegendVisiblityBarGraph={changeLegendVisiblityBarGraph}/>
+          </div>}
+        {/* { bms_active!=-1 && <div>
+          <SizedBox/>
+          <BarChart data={bms_data_bar_graph[`BMS ${bms_active}`]} bms_active={bms_active} changeLegendVisiblityBarGraph={changeLegendVisiblityBarGraph}/>
         <SizedBox/>
           <SmallOne>Mean</SmallOne>
           <CalcOuterContainer className='noscroll'>
@@ -475,7 +470,7 @@ const ImportData = () => {
             }
           </CalcOuterContainer>
         </div>}
-        <SizedBox/>
+        <SizedBox/> */}
         {   bms_active !=-1&&
             <ColContainer>
                 {

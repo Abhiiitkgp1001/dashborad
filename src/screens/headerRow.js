@@ -184,7 +184,7 @@ const HeaderRow = () => {
           }
           vol_arr.push({
             data: filtered_vol_data,
-            timeStamp : convertDate(store.getState().timestamp[j])
+            timestamp : convertDate(store.getState().timestamp[j])
           });
         }
 
@@ -197,7 +197,7 @@ const HeaderRow = () => {
           }
           temp_arr.push({
             data: filtered_temp_data,
-            timeStamp : convertDate(store.getState().timestamp[j])
+            timestamp : convertDate(store.getState().timestamp[j])
           });
         }
 
@@ -206,7 +206,7 @@ const HeaderRow = () => {
           
           current_arr.push({
             data: store.getState().current[j],
-            timeStamp : convertDate(store.getState().timestamp[j])
+            timestamp : convertDate(store.getState().timestamp[j])
           });
         }
         bms_obj['voltage'] = vol_arr;
