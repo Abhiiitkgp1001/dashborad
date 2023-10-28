@@ -109,6 +109,10 @@ const HeaderRow = () => {
 
   useEffect( () => {
     if (deviceConnected === true) {
+      dispatch(dataAction.setDevice({
+        device_unique_id: "AF-BC-48-29-51-21",
+        device_name: "test",
+      }));   
       dispatch(dataAction.setBMS());
       dispatch(dataAction.setCells());
       dispatch(dataAction.setVoltage(27));
@@ -145,6 +149,8 @@ const HeaderRow = () => {
     const session_name = "Session - "+convertDate(store.getState().timestamp[0]);
     
     var data = {
+      device_unique_id: store.getState().device.device_unique_id.toString(),
+      device_name: store.getState().device.device_name.toString(),
       no_of_bms: parseInt(store.getState().bms.toString()),
       no_of_cells: store.getState().bms_cells_voltage,
       bms_names: store.getState().bms_cells_voltage.map((item,index)=>`BMS${index}`),

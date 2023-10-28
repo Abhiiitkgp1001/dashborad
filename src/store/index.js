@@ -5,6 +5,7 @@ const initialState = {
   session_name: null,
   bms_ids: [],
   bms: 0,
+  device: {},
   data_sent_index:0,
   cells: 0,
   bms_cells_voltage: [],
@@ -27,6 +28,9 @@ const dataSlice = createSlice({
   name: "bms",
   initialState: initialState,
   reducers: {
+    setDevice: (state,action)=>{
+      state.device = action.payload;
+    },
     setSessionId: (state, action) => {
       state.session_id = action.payload;
     },

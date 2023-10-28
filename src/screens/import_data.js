@@ -5,10 +5,13 @@ import { read, utils} from 'xlsx';
 import AreaChart from '../components/AreaChart';
 import { mean, median, standardDeviation } from '../helpers/utils';
 import SmallOne from '../components/smallOne';
-import { Modal, Spin } from 'antd';
+import { Modal, Spin,Select,Input } from 'antd';
 import { get_all_session } from '../apis/get/get_all_sessions';
 import { get_session_data } from '../apis/get/get_session_data';
 import BarChart from '../components/BarChart';
+import { get_all_devices } from '../apis/get/get_all_devices';
+const { Search } = Input;
+
 const colors = ['#272829','#435334','#2E3840'];
 const max = 2;
 const min = 0;
@@ -147,11 +150,14 @@ const ImportData = () => {
     const [data_median, setDataMedian] = useState([]);
     const [data_std, setDataStd] = useState([]);
     const [allSessions, setAllSessions] = useState([]);
+    const [allDevices, setAllDevices] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [spining, setSpining] = useState(false);
     const [bms_data_bar_graph, setBMSDataBarGraph] = useState({});
     useEffect( () => {
+      
+      get_devices();
       get_sessions();
     }, [])
     
@@ -163,6 +169,24 @@ const ImportData = () => {
         setAllSessions(response.data);
       }
     }
+    const get_devices = async()=>{
+      const response = await get_all_devices();
+      if(response.status == 200){
+        console.log(response.data);
+        setIsLoading(false);
+        let devices = [];
+        for(let i in response.data){
+          let ob = {};
+          ob._id = response.data[i]._id;
+          ob.value = response.data[i].device_unique_id;
+          ob.label = response.data[i].device_name;
+          devices.push(ob);
+        }
+        setAllDevices(devices);
+      }
+    }
+    const filterOption = (input, option) =>
+  (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
 
     const handleImport = ($event) => {
         const files = $event.target.files;
@@ -379,10 +403,23 @@ const ImportData = () => {
               <GreenButton onClick={()=> setIsOpen(true)}>Fetch Past Sessions</GreenButton>
               <Modal title="Select Session" open={isOpen} footer="" onOk={()=>{}} onCancel= {spining?()=>{}: ()=>setIsOpen(false)}>
                 <Spin spinning={spining} >
+                <RowContainer>
+                <Search placeholder="Search session" allowClear onSearch={()=>{}}  />
+                <Select
+                  placeholder="Select Device"
+                  allowClear
+                  loading={false}
+                  filterOption={filterOption}
+                  showSearch
+                  optionFilterProp="children"
+                  options={allDevices}
+                />
+                </RowContainer>
+                
                 <SessionsContainer className='noscroll'>
                 {
                   allSessions.map((item,index)=>(
-                    <GreenButton key={index} onClick={async ()=>{
+                    <GreenButton key={index} style={{ marginLeft:'0px' }} onClick={async ()=>{
                       setSpining(true);
                       const response = await get_session_data(item._id);
                       if(response.status==200){
