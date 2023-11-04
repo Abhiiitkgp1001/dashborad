@@ -11,7 +11,7 @@ import ForgotPassword from './screens/forgot_password';
 function App() {
   return (
     <Routes>
-      <Route path='/' element={<OTP/>}/>
+      <Route path='/' element={<ChangePassword/>}/>
       <Route path='/import' element={<ImportData/>}/>
     </Routes>
   );

@@ -57,6 +57,15 @@ font-weight : 600;
 text-align: center;
 gap:12px;
 `;
+const Text = styled.div`
+font-family: Poppins;
+font-size: 12px;
+justify-content: center;
+align-items: center;
+font-weight : 600;
+text-align: center;
+color: #9BBEC8;
+`;
 
 const ChangePassword = () => {
   return (
@@ -64,7 +73,13 @@ const ChangePassword = () => {
 
         <PasswordContainer>
             <Heading >Cell Doc <BiSolidCarBattery/></Heading>
-            <SmallTwo style={{ color: '#9BBEC8' }}>You can now change the password</SmallTwo>
+            <Heading >Enter Verification Code</Heading>
+            <Text>A 6 digit verification code has been send to the email : abhi************@gmail.com</Text>
+            <div/>
+            <TextField placeholder="6 digit code"/>
+            <div/>
+            <Text style={{ color: '#9BBEC8' }}>Enter a new password te reset the password on your account. We'll ask for this password whenever you log in.</Text>
+            <div/>
             <TextField placeholder="old password"/>
             <TextField placeholder="new password"/>
             <TextField placeholder="confirm password"/>
