@@ -5,12 +5,13 @@ import { read, utils} from 'xlsx';
 import AreaChart from '../components/AreaChart';
 import { mean, median, standardDeviation } from '../helpers/utils';
 import SmallOne from '../components/smallOne';
+import { SearchOutlined } from '@ant-design/icons';
 import { Modal, Spin,Select,Input } from 'antd';
 import { get_all_session } from '../apis/get/get_all_sessions';
 import { get_session_data } from '../apis/get/get_session_data';
 import BarChart from '../components/BarChart';
 import { get_all_devices } from '../apis/get/get_all_devices';
-const { Search } = Input;
+import { get_device_sessions } from '../apis/get/get_device_sessions';
 
 const colors = ['#272829','#435334','#2E3840'];
 const max = 2;
@@ -150,9 +151,11 @@ const ImportData = () => {
     const [data_median, setDataMedian] = useState([]);
     const [data_std, setDataStd] = useState([]);
     const [allSessions, setAllSessions] = useState([]);
+    const [allSessionsStore, setAllSessionsStore] = useState([]);
     const [allDevices, setAllDevices] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [isDeviceLoading, setIsDeviceLoading] = useState(false);
     const [spining, setSpining] = useState(false);
     const [bms_data_bar_graph, setBMSDataBarGraph] = useState({});
     useEffect( () => {
@@ -167,6 +170,7 @@ const ImportData = () => {
         console.log(response.data);
         setIsLoading(false);
         setAllSessions(response.data);
+        setAllSessionsStore(response.data);
       }
     }
     const get_devices = async()=>{
@@ -186,8 +190,34 @@ const ImportData = () => {
       }
     }
     const filterOption = (input, option) =>
-  (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
-
+      (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
+    
+    const handleChangeDevice = async (value) => {
+      if(value != undefined){
+        setIsDeviceLoading(true);
+        const response = await get_device_sessions(value);
+        if(response.status == 200){
+          const sessions = response.data.sessions;
+          setAllSessions(sessions);
+        }
+        setIsDeviceLoading(false);
+      }else{
+        setAllSessions(allSessionsStore);
+      }
+    };
+    const onSearchSession = (e) => {
+      const oldSessionList = [...allSessionsStore];
+      let newSessionList = [];
+      for(let i in oldSessionList){
+        console.log((oldSessionList[i]?.session_name?? '').toLowerCase());
+        if((oldSessionList[i]?.session_name?? '').toLowerCase().includes(e.target.value.toLowerCase())){
+          newSessionList.push(oldSessionList[i]);
+        }
+      }
+      setAllSessions(newSessionList);
+      console.log(newSessionList);
+      console.log(e.target.value);
+    };
     const handleImport = ($event) => {
         const files = $event.target.files;
         if (files.length) {
@@ -404,11 +434,13 @@ const ImportData = () => {
               <Modal title="Select Session" open={isOpen} footer="" onOk={()=>{}} onCancel= {spining?()=>{}: ()=>setIsOpen(false)}>
                 <Spin spinning={spining} >
                 <RowContainer>
-                <Search placeholder="Search session" allowClear onSearch={()=>{}}  />
+                <Input placeholder="Search session" allowClear onChange={onSearchSession} suffix={<SearchOutlined />} />
                 <Select
                   placeholder="Select Device"
                   allowClear
-                  loading={false}
+                  style={{width: 240}}
+                  onChange={handleChangeDevice}
+                  loading={isDeviceLoading}
                   filterOption={filterOption}
                   showSearch
                   optionFilterProp="children"
