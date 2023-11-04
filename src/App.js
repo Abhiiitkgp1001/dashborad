@@ -7,10 +7,11 @@ import SignUp from './screens/sign_up';
 import Login from './screens/login';
 import OTP from './screens/otp';
 import ChangePassword from './screens/change_password';
+import ForgotPassword from './screens/forgot_password';
 function App() {
   return (
     <Routes>
-      <Route path='/' element={<SignUp/>}/>
+      <Route path='/' element={<OTP/>}/>
       <Route path='/import' element={<ImportData/>}/>
     </Routes>
   );

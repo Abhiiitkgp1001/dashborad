@@ -31,7 +31,7 @@ font-weight : 700;
   opacity: 0.75;
 }
 `;
-const VerificationContainer = styled.div`
+const ForgotPasswordContainer = styled.div`
     display: flex;
     flex-direction: column;
     margin : auto;
@@ -57,7 +57,6 @@ font-weight : 600;
 text-align: center;
 gap:12px;
 `;
-
 const Text = styled.div`
 font-family: Poppins;
 font-size: 12px;
@@ -68,21 +67,27 @@ text-align: center;
 color: #9BBEC8;
 `;
 
-const OTP = () => {
+
+const ForgotPassword = () => {
   return (
     <Container>
 
-        <VerificationContainer>
-        <Heading >Cell Doc <BiSolidCarBattery/></Heading>
+        <ForgotPasswordContainer>
+            <Heading >Cell Doc <BiSolidCarBattery/></Heading>
             <Heading >Enter Verification Code</Heading>
             <Text>A 6 digit verification code has been send to the email : abhi************@gmail.com</Text>
             <div/>
             <TextField placeholder="6 digit code"/>
+            <div/>
+            <Text style={{ color: '#9BBEC8' }}>Enter a new password te reset the password on your account. We'll ask for this password whenever you log in.</Text>
+            <div/>
+            <TextField placeholder="new password"/>
+            <TextField placeholder="confirm password"/>
             <SizedBox/>
-            <GreenButton>Verify</GreenButton>
-        </VerificationContainer>
+            <GreenButton>Change Password</GreenButton>
+        </ForgotPasswordContainer>
     </Container>
   )
 }
 
-export default OTP
+export default ForgotPassword
