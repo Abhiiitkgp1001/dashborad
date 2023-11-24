@@ -1,10 +1,19 @@
-import React from 'react'
+import React,{useState} from 'react'
 import styled from 'styled-components'
-import SmallOne from '../components/smallOne';
+import { Spin } from 'antd';
 import TextField from '../components/TextField';
 import { BiSolidCarBattery } from "react-icons/bi";
-import SmallTwo from '../components/smallTwo';
+import { useNavigate } from 'react-router-dom';
+import { sign_in } from '../apis/post/sign_in';
+import SmallThree from '../components/smallThree';
+import { usernameValidator } from '../helpers/utils';
+import { useDispatch } from 'react-redux';
+import { dataAction } from '../store';
 
+const SpinContainer = styled.div`
+    width: 400px;
+    margin: auto;
+`;
 const Container = styled.div`
     display: flex;
     flex-direction: column;
@@ -32,15 +41,16 @@ font-weight : 700;
 }
 `;
 const LoginContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    margin : auto;
-    align-items: center;
-    padding : 24px 32px 12px 32px;
-    border-radius : 12px;
-    background-color: #fff;
-    gap: 12px;
-    width : 360px;
+display: flex;
+flex-direction: column;
+margin : auto;
+align-items: center;
+padding : 24px 32px 12px 32px;
+border-radius : 12px;
+background-color: #fff;
+gap: 12px;
+box-sizing: border-box;
+width : 400px;
   `;
   const SizedBox = styled.div`
   display: flex;
@@ -58,18 +68,62 @@ text-align: center;
 gap:12px;
 `;
 
-const Login = () => {
+const Login = (props) => {
+  const [formData, setFormData] = useState({})  
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleChange = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+    setFormData(values => ({...values, [name]: value}));
+  }
+
+  const signIn = async () => {
+    if(usernameValidator(formData.username) && formData.password.length >= 8){
+        setLoading(true);
+        const user_data= {
+            user_name : formData.username,
+            password : formData.password,
+        };
+        console.log(user_data);
+        const response = await sign_in(user_data);
+        console.log(response);
+        if(response && response.status == 200){
+            setLoading(false);
+            dispatch(dataAction.setUserData({user_id: response.data.userId, token: response.data.token }));
+            navigate('/dashboard');
+        }else{
+            if(!usernameValidator(formData.username))
+            dispatch(dataAction.setAlert({type:"error", message:'Invalid username!'}));
+        if(formData.password.length < 8)
+            dispatch(dataAction.setAlert({type:"error", message:'Password should be of atleast 8 characters!'}));
+            setLoading(false);
+        }
+
+    }
+  }
   return (
     <Container>
-
+        <SpinContainer>
+            <Spin spinning={loading}>
         <LoginContainer>
             <Heading >Cell Doc <BiSolidCarBattery/></Heading>
             <div/>
-            <TextField placeholder="email/mobile no"/>
-            <TextField placeholder="password"/>
+            <TextField id="username" value={formData.username || ''} onChange={handleChange} name="username" placeholder="email/phone no"/>
+            <TextField id="password" value={formData.password || ''} type="password" onChange={handleChange} name='password' placeholder="password"/>
+            <SmallThree onClick={()=> navigate('/forgotpassword')} style={{cursor:'pointer'
+                    }}>Forgot password</SmallThree>
             <SizedBox/>
-            <GreenButton>Login</GreenButton>
+            <GreenButton onClick={signIn}>Login</GreenButton>
+            
+            <SmallThree>Don't have an account? <span onClick={()=>props.setIsSignIn(false) } style={{
+                        color: "#282733", cursor:'pointer'
+                    }}>Sign Up</span></SmallThree>
         </LoginContainer>
+        </Spin>
+        </SpinContainer>
     </Container>
   )
 }

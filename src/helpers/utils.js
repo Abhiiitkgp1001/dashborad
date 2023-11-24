@@ -1,3 +1,6 @@
+import { emailRegex, phoneRegex } from "../config";
+import store, { dataAction } from "../store";
+
 export function mean(numbers) {
     for(var i=0;i<numbers.length;i++){
         numbers[i] = parseFloat(numbers[i].toString());
@@ -69,4 +72,22 @@ export function convertDate(date){
     const seconds = date / 1000;
     const dt = new Date(seconds * 1000).toISOString(); 
     return dt;
+}
+
+export function usernameValidator(username){
+    if(username.length==10 && phoneRegex.test(username)) return true;
+    if(emailRegex.test(username)) return true;
+    return false;
+}
+export function getUserData(){
+    let user_data = {
+        user_id: store.getState().user_id,
+        token: store.getState().token,
+    }
+    if(user_data.token == null || user_data.user_id ==null){
+        user_data = JSON.parse(localStorage.getItem('user_data'));
+        if(user_data && user_data.token!==null && user_data.user_id!==null)
+            store.dispatch(dataAction.setUserData(user_data));
+      }
+    return user_data;
 }

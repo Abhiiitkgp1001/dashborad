@@ -1,6 +1,9 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
+  user_id: null,
+  token: null,
+  alert: null,
   session_id: null,
   session_name: null,
   bms_ids: [],
@@ -28,6 +31,19 @@ const dataSlice = createSlice({
   name: "bms",
   initialState: initialState,
   reducers: {
+    setUserData: (state, action)=>{
+      state.user_id = action.payload.user_id;
+      state.token = action.payload.token;
+      const user_data = {
+        token: action.payload.token,
+        user_id:  action.payload.user_id
+      }
+      localStorage.setItem('user_data', JSON.stringify(user_data));
+
+    },
+    setAlert: (state, action)=>{
+      state.alert = action.payload;
+    },
     setDevice: (state,action)=>{
       state.device = action.payload;
     },

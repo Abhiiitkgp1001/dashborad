@@ -71,7 +71,7 @@ color: #9BBEC8;
 const OTP = () => {
   return (
     <Container>
-
+        
         <VerificationContainer>
         <Heading >Cell Doc <BiSolidCarBattery/></Heading>
             <Heading >Enter Verification Code</Heading>
