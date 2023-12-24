@@ -3,6 +3,7 @@ import { configureStore, createSlice } from "@reduxjs/toolkit";
 const initialState = {
   user_id: null,
   token: null,
+  profile: null,
   alert: null,
   session_id: null,
   session_name: null,
@@ -25,6 +26,7 @@ const initialState = {
   graphActiveBMSIndex: [],
   graphPlayPause: [],
   consoleArray: [],
+
 };
 
 const dataSlice = createSlice({
@@ -40,6 +42,11 @@ const dataSlice = createSlice({
       }
       localStorage.setItem('user_data', JSON.stringify(user_data));
 
+    },
+    setSignOut: (state, action)=>{
+      state.user_id = null;
+      state.token = null;
+      localStorage.clear();
     },
     setAlert: (state, action)=>{
       state.alert = action.payload;

@@ -54,8 +54,7 @@ const PaddingContainer = styled.div`
 `;
 
 const AppContainer = styled.div`
-  background-color: rgb(213, 217, 226, 0.2);
-  height: 100vh;
+  background-color: white;
 `;
 
 const Dashboard = () => {
@@ -106,7 +105,7 @@ const Dashboard = () => {
   useEffect(() => {}, [listView])
   return (
     <AppContainer>
-      <Layout>
+      
         <VpBoard />
         <Customers />
         <div>
@@ -137,7 +136,7 @@ const Dashboard = () => {
         </div>
 
         <PaddingContainer />
-      </Layout>
+      
     </AppContainer>
   );
 };

@@ -102,6 +102,13 @@ const SignUp = () => {
   }
  
   const validateInputsAndInitiateSignup = async () => {
+    if(formData.email === undefined || formData.email === null || formData.email === '' ||
+        formData.phone_no === undefined || formData.phone_no === null || formData.phone_no === '' ||
+        formData.password === undefined || formData.password === null || formData.password === '' ||
+        formData.confirmPassword === undefined || formData.confirmPassword === null || formData.confirmPassword === '' ){
+        dispatch(dataAction.setAlert({type:"error", message:'Enter all details'}));
+        return;
+    }
     if(emailRegex.test(formData.email) && phoneRegex.test(formData.phone_no) && formData.password.length>=8  && formData.confirmPassword.length>=8 && formData.confirmPassword === formData.password){
         console.log(formData);
         setLoading(true);
@@ -148,9 +155,9 @@ const SignUp = () => {
         console.log(response); 
         if(response && response.status === 201){
             console.log(response);
-
+            dispatch(dataAction.setUserData({user_id: response.data.userId, token: response.data.token }));
             setLoading(false);
-            navigate('/dashboard');
+            navigate('/home');
         }else{
             setLoading(false);
         }

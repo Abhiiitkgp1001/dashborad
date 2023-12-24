@@ -12,7 +12,7 @@ display: flex;
 justify-content: center;
 align-items: center;
 `;
-const ProtectedRoute = (props) => {
+const ProtectedRouteEarlier = (props) => {
    const [validation, setValidation] = useState(null);
    const [loading, setLoading] = useState(true);
   useEffect(()=>{
@@ -41,7 +41,7 @@ const ProtectedRoute = (props) => {
   <Container >
     <Spin size="large"/>
   </Container>
-  : validation ? <div>{props.children}</div> : <Navigate to={props.to} />;
+  : !validation ? <div>{props.children}</div> : <Navigate to={props.to} />;
 };
 
-export default ProtectedRoute;
+export default ProtectedRouteEarlier;

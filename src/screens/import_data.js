@@ -166,7 +166,7 @@ const ImportData = () => {
     
     const get_sessions  = async()=>{
       const response = await get_all_session();
-      if(response.status == 200){
+      if(response && response.status == 200){
         console.log(response.data);
         setIsLoading(false);
         setAllSessions(response.data);
@@ -175,7 +175,7 @@ const ImportData = () => {
     }
     const get_devices = async()=>{
       const response = await get_all_devices();
-      if(response.status == 200){
+      if(response && response.status == 200){
         console.log(response.data);
         setIsLoading(false);
         let devices = [];

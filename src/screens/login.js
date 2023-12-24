@@ -81,6 +81,11 @@ const Login = (props) => {
   }
 
   const signIn = async () => {
+    if(formData.username === undefined || formData.username === null || formData.username === '' ||
+        formData.password === undefined || formData.password === null || formData.password === '' ){
+        dispatch(dataAction.setAlert({type:"error", message:'Enter all details'}));
+        return;
+    }
     if(usernameValidator(formData.username) && formData.password.length >= 8){
         setLoading(true);
         const user_data= {
@@ -93,7 +98,7 @@ const Login = (props) => {
         if(response && response.status == 200){
             setLoading(false);
             dispatch(dataAction.setUserData({user_id: response.data.userId, token: response.data.token }));
-            navigate('/dashboard');
+            navigate('/home');
         }else{
             if(!usernameValidator(formData.username))
             dispatch(dataAction.setAlert({type:"error", message:'Invalid username!'}));
@@ -102,6 +107,13 @@ const Login = (props) => {
             setLoading(false);
         }
 
+    }else{
+      if(!usernameValidator(formData.username)){
+        dispatch(dataAction.setAlert({type:"error", message:'Invalid Username'}));
+      }else if(formData.password.length < 8){
+        dispatch(dataAction.setAlert({type:"error", message:'Invalid Password'}));
+      }
+        
     }
   }
   return (
