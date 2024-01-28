@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   AppstoreOutlined,
   CloudOutlined,
@@ -14,6 +14,9 @@ import Dashboard from './Dashboard/dashboard';
 import ImportData from './import_data';
 import AdminDashboard from './AdminDashboard';
 import Accounts from './Accounts';
+import { get_profile } from '../apis/get/get_profile';
+import store, { dataAction } from '../store';
+import { get_all_devices } from '../apis/get/get_all_devices';
 const { Sider } = Layout;
 const CustomSider = styled(Sider)`
 overflow: auto;
@@ -79,6 +82,27 @@ const Home = () => {
   const handeMenuChange = (menu) => {
     setSelectedIndex(parseInt(menu.key));
   }
+
+  const getProfile = async () => {
+    const response = await get_profile();
+    if(response && (response.status === 200 || response.status === 201)){
+      store.dispatch(dataAction.setProfile(response.data.profile));
+    }
+  }
+
+  const getDevices = async () => {
+    const response = await get_all_devices();
+    if(response && (response.status === 200 || response.status === 201)){
+      store.dispatch(dataAction.setDevices(response.data));
+    }
+  }
+
+  useEffect(() => {
+    getProfile();
+    getDevices();
+  }, [])
+  
+
   return (
     <Layout hasSider>
       <CustomSider style={{ position: 'fixed', backgroundColor:'#1bc5bd' }}>

@@ -94,10 +94,10 @@ const Login = (props) => {
         };
         console.log(user_data);
         const response = await sign_in(user_data);
-        console.log(response);
+        // console.log(response);
         if(response && response.status == 200){
             setLoading(false);
-            dispatch(dataAction.setUserData({user_id: response.data.userId, token: response.data.token }));
+            dispatch(dataAction.setUserData({user_id: response.data.user._id, token: response.data.token }));
             navigate('/home');
         }else{
             if(!usernameValidator(formData.username))

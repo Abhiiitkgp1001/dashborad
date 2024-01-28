@@ -155,7 +155,7 @@ const SignUp = () => {
         console.log(response); 
         if(response && response.status === 201){
             console.log(response);
-            dispatch(dataAction.setUserData({user_id: response.data.userId, token: response.data.token }));
+            dispatch(dataAction.setUserData({user_id: response.data.user._id, token: response.data.token }));
             setLoading(false);
             navigate('/home');
         }else{

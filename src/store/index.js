@@ -7,6 +7,7 @@ const initialState = {
   alert: null,
   session_id: null,
   session_name: null,
+  devices: [],
   bms_ids: [],
   bms: 0,
   device: {},
@@ -36,16 +37,24 @@ const dataSlice = createSlice({
     setUserData: (state, action)=>{
       state.user_id = action.payload.user_id;
       state.token = action.payload.token;
+      console.log(action.payload)
       const user_data = {
         token: action.payload.token,
         user_id:  action.payload.user_id
       }
       localStorage.setItem('user_data', JSON.stringify(user_data));
-
+      
+    },
+    setProfile:(state, action)=>{
+      state.profile = action.payload;
+    },
+    setDevices:(state, action)=>{
+      state.devices = action.payload;
     },
     setSignOut: (state, action)=>{
       state.user_id = null;
       state.token = null;
+      state.profile = null;
       localStorage.clear();
     },
     setAlert: (state, action)=>{

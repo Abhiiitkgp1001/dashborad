@@ -12,11 +12,13 @@ import ToastContaier from './components/ToastContaier';
 import ProtectedRoute from './components/protectedRoute';
 import Home from './screens/Home';
 import ProtectedRouteEarlier from './components/ProtectedRouteEarlier';
+import Dummy from './screens/Dummy';
 function App() {
   return (
    <ToastContaier>
      <Routes>
       <Route path='/' element={<ProtectedRouteEarlier children={<SignUp/>} to='/home'/>}/>
+      <Route path='/dummy' element={<Dummy/>}/>
       <Route path='/forgotpassword' element={<ForgotPassword/>}/>
       <Route path='/home' element={<ProtectedRoute children={<Home/>} to="/"/>}/>
       <Route path='/import' element={<ImportData/>}/>
