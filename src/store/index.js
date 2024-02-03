@@ -11,7 +11,7 @@ const initialState = {
   bms_ids: [],
   bms: 0,
   device: {},
-  data_sent_index:0,
+  data_sent_index: 0,
   cells: 0,
   bms_cells_voltage: [],
   bms_temp: [],
@@ -27,40 +27,39 @@ const initialState = {
   graphActiveBMSIndex: [],
   graphPlayPause: [],
   consoleArray: [],
-
 };
 
 const dataSlice = createSlice({
   name: "bms",
   initialState: initialState,
   reducers: {
-    setUserData: (state, action)=>{
+    setUserData: (state, action) => {
       state.user_id = action.payload.user_id;
       state.token = action.payload.token;
-      console.log(action.payload)
+      console.log(action.payload);
       const user_data = {
         token: action.payload.token,
-        user_id:  action.payload.user_id
-      }
-      localStorage.setItem('user_data', JSON.stringify(user_data));
-      
+        user_id: action.payload.user_id,
+      };
+      localStorage.setItem("user_data", JSON.stringify(user_data));
     },
-    setProfile:(state, action)=>{
+    setProfile: (state, action) => {
+      // console.log("action", action.payload);
       state.profile = action.payload;
     },
-    setDevices:(state, action)=>{
+    setDevices: (state, action) => {
       state.devices = action.payload;
     },
-    setSignOut: (state, action)=>{
+    setSignOut: (state, action) => {
       state.user_id = null;
       state.token = null;
       state.profile = null;
       localStorage.clear();
     },
-    setAlert: (state, action)=>{
+    setAlert: (state, action) => {
       state.alert = action.payload;
     },
-    setDevice: (state,action)=>{
+    setDevice: (state, action) => {
       state.device = action.payload;
     },
     setSessionId: (state, action) => {
@@ -75,7 +74,7 @@ const dataSlice = createSlice({
     setDeviceConnected: (state, action) => {
       state.deviceConnected = action.payload;
     },
-    setDataSentIndex: (state,action) => {
+    setDataSentIndex: (state, action) => {
       state.data_sent_index = action.payload;
     },
     setBMS: (state, action) => {
@@ -94,13 +93,12 @@ const dataSlice = createSlice({
       state.cells = slicedData;
     },
     setCurrent: (state, action) => {
-      var data = `I=${Math.round(Math.random()*1000)/100};`;
+      var data = `I=${Math.round(Math.random() * 1000) / 100};`;
       // var data = action.payload;
       var slicedData = data.substring(2).replace(";", "");
       state.consoleArray.push(data);
-      
+
       state.current.push(slicedData);
-      
     },
     setVoltage: (state, action) => {
       var data =
@@ -116,12 +114,12 @@ const dataSlice = createSlice({
       var vol = Array.from({ length: num_bms }, () =>
         Array(16).fill(undefined)
       );
-      
+
       let no = [];
       for (var i = 0; i < num_bms; i++) {
         let cnt = 0;
         for (var j = 0; j < 16; j++) {
-          if (16 * i + j < slicedData.length){
+          if (16 * i + j < slicedData.length) {
             cnt++;
             // vol[i][j] = parseFloat(slicedData[16*i+j].split(',')[1]);
             vol[i][j] = Math.round(Math.random() * 1000) / 100;
@@ -130,7 +128,7 @@ const dataSlice = createSlice({
         no[i] = cnt;
       }
       var obj = { ...state.voltage };
-      
+
       for (var i = 0; i < num_bms; i++) {
         if (!Object.keys(obj).includes(`bms ${i}`)) obj[`bms ${i}`] = [];
         obj[`bms ${i}`].push(vol[i]);
@@ -158,17 +156,16 @@ const dataSlice = createSlice({
       for (var i = 0; i < num_bms; i++) {
         let cnt = 0;
         for (var j = 0; j < 5; j++) {
-          if (5 * i + j < slicedData.length){
+          if (5 * i + j < slicedData.length) {
             cnt++;
             // temp[i][j] = parseFloat(slicedData[5*i+j].split(',')[1]);
             temp[i][j] = Math.round(Math.random() * 1000) / 100;
           }
-          
         }
         no[i] = cnt;
       }
       var obj = { ...state.temp };
-      
+
       for (var i = 0; i < num_bms; i++) {
         if (!Object.keys(obj).includes(`bms ${i}`)) obj[`bms ${i}`] = [];
         obj[`bms ${i}`].push(temp[i]);
